@@ -39,3 +39,18 @@
   studies/gold-spx-switching-replication.md (cross-links between the two
   gold/SPX rotation variants)
 - Updated index.md (12 pages)
+
+## [2026-10-08] create | Questions layer added to schema + backlog seeded
+- SCHEMA.md: new `questions/` layer (warm backlog between spark and claim/study),
+  `type: question`, status lifecycle open→active→promoted|answered|dropped,
+  spawned_by/promoted_to/answered_by fields, first-cheap-check section,
+  feedback edge (study verdicts must file questions), stale-backlog lint rule,
+  `question` tag added to taxonomy.
+- Created questions/does-the-cash-leg-earn-its-keep.md (P1)
+- Created questions/both-assets-down-regimes.md (P1)
+- Created questions/dividend-exclusion-edge-hole.md (P2)
+- Created questions/gold-trend-filter-post-2023.md (P2)
+- Updated: studies/gold-spx-ratio-rotation-replication.md,
+  studies/gold-spx-switching-replication.md ("Questions this study must answer
+  or update" sections cross-linking the backlog)
+- Updated index.md (16 pages)

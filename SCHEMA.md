@@ -18,6 +18,7 @@ research-wiki/
 ├── concepts/            # Layer 2: topics, strategies, indicators, microstructure phenomena
 ├── entities/            # Layer 2: people, firms, funds, datasets, instruments, books
 ├── studies/             # Layer 2: our own studies — proposal, protocol, results, verdict
+├── questions/           # Layer 2: live open questions / hypothesis backlog (our own wonderings)
 ├── comparisons/         # Layer 2: side-by-side analyses
 └── queries/             # Layer 2: filed answers worth keeping
 ```
@@ -36,6 +37,34 @@ research-wiki/
 4. Frank's remembered/heuristic knowledge is ingested the same way: recorded as
    a claim with `origin: frank` (`confidence` unset until re-researched), then
    researched for the record.
+
+### Questions: the warm layer (backlog of live wonderings)
+A **question** is something WE wonder, not an assertion we are verifying. It has
+no numbers yet and often no protocol yet — it is the stage between a spark
+(ingest, study verdict, source disagreement, Frank's intuition) and a formal
+claim/study pair. Examples of what belongs here: "does the cash leg earn its
+keep?", "what happens when both assets fall together?" — questions no source
+asserts but whose answers shape which claims matter.
+
+- One file per question in `questions/`, `type: question`.
+- Every question records `spawned_by:` (claims/concepts/studies that triggered
+  it) so lineage is traceable, and a **first cheap check** — the smallest piece
+  of work that would sharpen or kill it.
+- A question is NOT a claim: it carries no confidence and no numbers. The moment
+  it sharpens into a testable assertion, write the claim + study and promote the
+  question (keep the page as lineage).
+
+**Question status lifecycle:**
+`open → active (being sharpened) → promoted (claim+study exist) | answered
+(filed in queries/, no study needed) | dropped (not worth bandwidth — say why)`
+
+**Feedback edge:** every study verdict section must list the questions the
+result opened, each filed as a `questions/` page (or linked to an existing
+one). This is what makes the loop compound instead of draining.
+
+Lint rule: surface `open`/`active` questions untouched for >30 days (stale
+backlog) and `open` questions with no `spawned_by` (unsourced curiosity —
+either find the spark or drop it).
 
 ### Claim status lifecycle
 `untested → in-progress → supported | refuted | mixed | inconclusive`
@@ -60,7 +89,7 @@ plus `dodged` (not worth testing; note why).
 title: Page Title
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
-type: claim | concept | entity | study | comparison | query
+type: claim | concept | entity | study | question | comparison | query
 tags: [from taxonomy below]
 sources: [raw/articles/source-name.md]
 confidence: high | medium | low     # how well-supported
@@ -71,8 +100,18 @@ status: untested | in-progress | supported | refuted | mixed | inconclusive | do
 testable: true | false
 origin: source | frank | derived
 tested_by: [studies/study-slug]
+# question-only:
+status: open | active | promoted | answered | dropped
+priority: 1 | 2 | 3                 # 1 = work on it next; backlog ordering
+spawned_by: [claims/x, studies/y]   # what triggered the wondering
+promoted_to: [claims/z, studies/w]  # when promoted
+answered_by: queries/slug           # when answered without a study
 ---
 ```
+
+### Question page sections (required)
+Question (one sentence) · Why it matters (what it would change if answered) ·
+First cheap check (smallest experiment/sketch) · Status notes (dated bullets).
 
 ### Study page sections (required)
 Question · Claims tested (wikilinks) · Data & assumptions (universe, period,
@@ -99,7 +138,7 @@ Add new tags HERE before using them.
 - Microstructure: liquidity, spread, impact, order-flow, venue, latency
 - Risk & portfolio: risk, position-sizing, drawdown, leverage, correlation, rebalancing
 - Evidence: backtest, live-trading, academic, anecdote, data-quality, overfitting
-- Process: study, claim, heuristic, mistake, edge, cost
+- Process: study, claim, heuristic, mistake, edge, cost, question
 - Meta: comparison, history, person, firm, book, dataset
 
 ## Page Thresholds

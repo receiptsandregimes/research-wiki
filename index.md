@@ -2,7 +2,7 @@
 
 > Catalog of every page in the trading brain. Read this first to find relevant
 > pages for any query.
-> Last updated: 2026-10-08 | Total pages: 12
+> Last updated: 2026-10-08 | Total pages: 16
 
 ## Claims
 - [[gold-spx-switching-outperforms-both-assets]] — vendor backtest: switching system 12.7% CAGR / 31% max DD vs SPX 9.0%/53%, gold 7.5%/62% (1977–2026). untested.
@@ -23,6 +23,13 @@
 ## Studies
 - [[gold-spx-ratio-rotation-replication]] — proposed: replicate disclosed ratio-SMA rule; dividend, cost, SMA-length sensitivity.
 - [[gold-spx-switching-replication]] — proposed: grid plausible rule variants, test vendor stats + parameter sensitivity (1977+, monthly).
+
+## Questions
+> Live backlog: what we wonder next. Priority-ordered; each has a first cheap check.
+- [[does-the-cash-leg-earn-its-keep]] — P1: does Returnstream's T-bill escape hatch beat QS's always-in-market skeleton? The sources' core disagreement.
+- [[both-assets-down-regimes]] — P1: what do both rotations do when gold AND SPX fall together (2008 wk, 2020, 2013)? All DD claims assume they alternate.
+- [[dividend-exclusion-edge-hole]] — P2: how much of the 9.9% rotation edge is the price-index dividend exclusion?
+- [[gold-trend-filter-post-2023]] — P2: did gold's 2024–26 rally already falsify the vendor's trend-filter-underperforms chart? Generalize cross-asset.
 
 ## Comparisons
 

@@ -45,6 +45,11 @@ SPX data, realistic costs, and different SMA lengths?
 6. Cross-check against [[gold-spx-switching-replication]] variants (does the
    Returnstream cash leg add anything over this simpler signal?).
 
+## Questions this study must answer or update
+- [[dividend-exclusion-edge-hole]] (step 2 answers it directly)
+- [[does-the-cash-leg-earn-its-keep]] (step 6)
+- [[both-assets-down-regimes]] (add a both-down months table to results)
+
 ## Results
 (pending — no code run yet)
 

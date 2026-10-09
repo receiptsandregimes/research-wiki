@@ -41,6 +41,11 @@ Report CAGR, max DD, Sharpe per variant; stress-window returns for Mar-2000–Oc
 and Nov-2007–Mar-2009; heatmap of CAGR/DD across L × filter to expose parameter
 sensitivity. Compare best/median variant against vendor's 12.7% / 31%.
 
+## Questions this study must answer or update
+- [[gold-trend-filter-post-2023]] (baseline leg answers the gold half)
+- [[does-the-cash-leg-earn-its-keep]] (cash-filter variants vs no-cash baseline)
+- [[both-assets-down-regimes]] (cash variants are the strategy's answer to this — measure it)
+
 ## Results
 (pending — no code run yet)
 
