@@ -2,6 +2,7 @@
 title: Gold & SPX Switching Strategy
 created: 2026-10-08
 updated: 2026-10-08
+see_also: [gold-spx-rs-ratio-rotation]
 type: concept
 tags: [commodities, equities, momentum, trend-following, backtest, drawdown]
 sources: [raw/articles/returnstream-gold-sp500-switching.md]
@@ -12,6 +13,8 @@ confidence: low
 
 A two-asset timing strategy from [[returnstream]]: alternate capital between gold and
 the S&P 500 based on relative trailing strength, with a risk-free-rate escape hatch.
+A simpler, fully-disclosed sibling with the same economic idea (no cash leg) is
+[[gold-spx-rs-ratio-rotation]] ([[quantified-strategies]] variant).
 
 ## Rules (as publicly described)
 - Measure relative strength of gold vs S&P 500 from each asset's trailing performance;

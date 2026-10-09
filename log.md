@@ -21,3 +21,21 @@
   - claims/gold-trend-filter-underperforms-bnh.md
 - Created study proposal: studies/gold-spx-switching-replication.md (proposed, not run)
 - Updated index.md (6 pages)
+
+## [2026-10-08] ingest | QuantifiedStrategies — S&P 500 & Gold Rotation Strategy
+- Raw: raw/articles/quantifiedstrategies-gold-sp500-rotation.md (sha256 d651e66e…);
+  site bot-walls plain HTTP — captured via browser; formal rules block members-only
+  but operative signal fully stated in free body text
+- Assets: raw/assets/quantifiedstrategies-gold-sp500-rotation/ (4 images from
+  ~/Downloads/quantified, all described in raw)
+- Created: concepts/gold-spx-rs-ratio-rotation.md
+- Created: entities/quantified-strategies.md
+- Created claims (all untested, testable, origin: source):
+  - claims/qs-rotation-beats-both-buyhold.md
+  - claims/qs-rotation-gfc-divergence.md
+  - claims/qs-rotation-asset-contributions-equal.md
+- Created study proposal: studies/gold-spx-ratio-rotation-replication.md (proposed, not run)
+- Updated: concepts/gold-spx-switching-strategy.md, entities/returnstream.md,
+  studies/gold-spx-switching-replication.md (cross-links between the two
+  gold/SPX rotation variants)
+- Updated index.md (12 pages)

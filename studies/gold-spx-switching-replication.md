@@ -51,3 +51,6 @@ sensitivity. Compare best/median variant against vendor's 12.7% / 31%.
 - If robust: compare against SPX-only trend + cash (does gold leg add anything?).
 - Weekly execution variant to check monthly-bar smoothing effects.
 - If Frank buys the ebook, rerun with the true rule set and diff.
+- Cross-link: [[gold-spx-ratio-rotation-replication]] tests the fully-disclosed
+  no-cash-leg sibling ([[gold-spx-rs-ratio-rotation]]) — run both and compare
+  whether the T-bill escape hatch earns its keep.

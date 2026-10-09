@@ -20,6 +20,8 @@ term through active market timing and stock picking."
   spreadsheets are paywalled. Treat published numbers as vendor marketing — verify
   independently before trusting.
 - Strategy family covered here: [[gold-spx-switching-strategy]] (momentum rotation).
+  Compare [[quantified-strategies]], which publishes the same strategy family with
+  fully-disclosed rules for free ([[gold-spx-rs-ratio-rotation]]).
 - Other strategies advertised on the site (not yet ingested): Relative Strength Strategy,
   Weekly Reversion Strategy, Gold Market Neutral Strategy, Soybean Oil Calendar Spread,
   Fidelity sector mutual funds vs ETFs comparison.
