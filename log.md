@@ -54,3 +54,23 @@
   studies/gold-spx-switching-replication.md ("Questions this study must answer
   or update" sections cross-linking the backlog)
 - Updated index.md (16 pages)
+
+## [2026-10-08] ingest | Frank recollection — gold convexity, co-rally onsets, dual momentum cap
+- Raw: raw/transcripts/frank-gold-convexity-dual-momentum-2026-10-08.md
+  (origin: frank-recollection, sha256 ed6a3584…). Editorial note: London Gold
+  Pool collapse verifies to March 1968 (LBMA/Wikipedia); Frank's "late 1968"
+  date + SPX-ATH pairing flagged for verification, record left as stated.
+- Created claims (origin: frank, untested, testable):
+  - claims/gold-call-option-filtered-levered.md
+  - claims/rotation-onset-co-rally.md
+- Created concepts: concepts/dual-momentum.md (round's keystone — both seed
+  systems shown as degenerate cases), concepts/gold-as-call-option.md
+  (contested: momentum-entry [Frank] vs contrarian-entry [Kaeppel])
+- Created entities: entities/frank.md, entities/gary-antonacci.md,
+  entities/jay-kaeppel.md
+- Created study proposals: studies/filtered-levered-gold-vs-bnh.md,
+  studies/co-rally-tax.md (both proposed, not run)
+- Created question: questions/dual-momentum-on-gold-spx.md (P1);
+  updated questions/does-the-cash-leg-earn-its-keep.md (reframed as
+  Antonacci's claim on our pair; Frank's working prior recorded)
+- Updated index.md (26 pages)

@@ -37,3 +37,10 @@ CAGR, max DD, Sharpe, and behavior in 2008, 2020, 2022.
 - 2026-10-08: opened from seed-article cross-reading (Frank's opinion request).
   Not promoted yet — waiting on the shared data pull; folds naturally into
   [[gold-spx-ratio-rotation-replication]] step 6 if we run that first.
+- 2026-10-08: reframed by Frank's ingest — this IS [[gary-antonacci]]'s
+  absolute-momentum claim tested on the gold/SPX pair. Both seed systems are
+  degenerate cases of [[dual-momentum]] (see table on that page). Frank's own
+  working answer is yes (he caught 2024–26 with the filtered ratio approach);
+  record the prior, still run the test. Study legs live in
+  [[filtered-levered-gold-vs-bnh]] (single-asset absolute momentum) and
+  [[co-rally-tax]] (shared vs per-asset absolute filter).
