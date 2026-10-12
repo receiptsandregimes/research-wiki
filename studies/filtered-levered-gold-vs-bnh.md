@@ -26,8 +26,11 @@ net of whipsaw and carry? (Frank's heuristic, on trial.)
 
 ## Data & assumptions
 
-- Gold monthly (and daily for whipsaw sensitivity), 1971-08 → present (LBMA PM
-  fix / FRED proxy). Bills: TB3MS. Margin-rate proxy for the levered leg;
+- Gold monthly (and daily for whipsaw sensitivity), 1971-08 → present, per the
+  [[lbma-gold-price]] composite leg: frozen PM-fix history 1968-04→2026-02 +
+  seam-normalized GLD total-return live extension (GC=F month-ends second
+  opinion); daily-MA variant runs fix-based to 2026-02, GLD/GC=F basis after —
+  fidelity caveat recorded there. Bills: TB3MS. Margin-rate proxy for the levered leg;
   report bill-financed AND margin-financed variants — financing cost IS the
   premium in this trade.
 - Filters: 12-mo total return > 0; 200-day MA (daily variant); 20-mo MA

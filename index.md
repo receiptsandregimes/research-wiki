@@ -2,7 +2,7 @@
 
 > Catalog of every page in the trading brain. Read this first to find relevant
 > pages for any query.
-> Last updated: 2026-10-12 | Total pages: 26 | PUBLIC — research record for @receiptsandregimes; page slugs are citation keys, never rename cited ones.
+> Last updated: 2026-10-12 | Total pages: 27 | PUBLIC — research record for @receiptsandregimes; page slugs are citation keys, never rename cited ones.
 
 ## Claims
 - [[gold-spx-switching-outperforms-both-assets]] — vendor backtest: switching system 12.7% CAGR / 31% max DD vs SPX 9.0%/53%, gold 7.5%/62% (1977–2026). untested.
@@ -24,6 +24,7 @@
 - [[frank]] — this brain's owner and a source in his own right (origin: frank heuristics, untested until re-researched).
 - [[gary-antonacci]] — Dual Momentum Investing; open rules, self-published numbers; our cash-leg question is his claim on our pair.
 - [[jay-kaeppel]] — Sentimentrader; gold convexity rhetoric similar to Frank's, but contrarian/cheap entry — live contradiction filed.
+- [[lbma-gold-price]] — the gold-fix dataset itself: official feeds all dead, mirrors frozen 2026-02; canonical record of our composite gold leg (frozen fix history + GLD/GC=F live extension).
 - [[quantified-strategies]] — strategy blog (Oddmund Groette); free rule descriptions + curves, code membership-only; price-only SPX data, no costs stated.
 - [[returnstream]] — strategy-marketing site selling rule-sets + backtest spreadsheets; treat numbers as vendor claims.
 

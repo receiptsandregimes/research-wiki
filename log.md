@@ -121,3 +121,20 @@
   Yahoo (seam-normalized); Shiller file ends 2023-09 as served.
 - dual-momentum-on-gold-spx stays unseeded on purpose: synthesis question fed
   by these four; seeding it now would invert the dependency order.
+
+## 2026-10-12 — data infrastructure: LBMA fix feeds declared dead; composite gold leg adopted
+
+- Verified: our PRIMARY gold mirror (forex-centuries LBMA daily) froze at
+  2026-02-25 — its upstream (prices.lbma.org.uk/json) is the Incapsula wall that
+  killed it repo-wide; every public daily-fix mirror shares that upstream, so
+  free live LBMA fix data is gone (corroborated: datahub gold-prices fell back
+  to Pink Sheet monthly averages; NDLC delisted; FRED retired 2022).
+- Frozen history pinned sha256 86057834…fb24d9 (1968-04-01→2026-02-25).
+- New gold-leg architecture recorded in [[lbma-gold-price]]: frozen fix history
+  + seam-normalized live extension on GLD total returns (GC=F month-ends as
+  second opinion, Pink Sheet monthly-average cross-check). Basis measured:
+  GC=F-vs-fix month-end median 0.36%, p90 1.21%, max 4.75% @ 2026-01 — the seam
+  window is the record's worst basis month; level-splicing banned, returns only.
+- receipts-lab fetch script updated accordingly (GLD added to universe; mirror
+  reclassified frozen-history; header cites this page). Paid licensed fix feed
+  (metals-api class) noted as the only fix-grade continuation — deferred.

@@ -29,7 +29,9 @@ filters capture the difference?
 
 - Gold + SPX (price and total-return) monthly, 1971→present (1968 LBMA-peg
   episode discussed qualitatively only — no reliable monthly SPX-vs-peg
-  series; date verification pending). Bills TB3MS. Costs 10 bps/switch.
+  series; date verification pending). Gold leg per [[lbma-gold-price]]
+  composite (frozen fix history + GLD/GC=F live extension; free fix feeds died
+  2026-02, log 2026-10-12). Bills TB3MS. Costs 10 bps/switch.
 - Onset definition (pre-registered, no hindsight labels): month t is an
   onset if BOTH assets make a new trailing-12-month high at t AND at least
   one had been >10% below its 24-month high at t−6. (Tune the 10%/6mo knobs

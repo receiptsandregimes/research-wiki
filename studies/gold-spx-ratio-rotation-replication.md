@@ -25,7 +25,9 @@ SPX data, realistic costs, and different SMA lengths?
 ## Data & assumptions
 - Universe: S&P 500 price index (matches source) AND total-return variant
   (Yahoo `^SPX` + dividend-reinvestment proxy, or `SPY` adjusted-close as proxy);
-  gold monthly spot (FRED `GOLDPMGBD228NL`, or `GLD` adjusted for modern era).
+  gold monthly spot per [[lbma-gold-price]] composite leg (frozen LBMA fix
+  history + seam-normalized GLD total-return live extension; the FRED
+  `GOLDPMGBD228NL` named at proposal time is dead — log 2026-10-12).
 - Period: 1985-01 → present (extend past source's Jul-2020 cutoff to test
   robustness through gold's 2024–25 run); monthly bars, positions from prior
   month-end data, executed next month.

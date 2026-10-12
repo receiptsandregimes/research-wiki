@@ -24,9 +24,12 @@ parameters?
 - [[gold-trend-filter-underperforms-bnh]]
 
 ## Data & assumptions
-- Universe: gold spot (LBMA PM fix or free proxy — FRED `GOLDPMGBD228NL`; or GLD/GDT
-  series for modern era), S&P 500 total return (or price index + reinvested dividend
-  proxy), 3-month T-bill (FRED `TB3MS`), 1977-01-01 → present, monthly bars.
+- Universe: gold spot per [[lbma-gold-price]] composite leg (frozen LBMA PM-fix
+  history 1968-04→2026-02 + seam-normalized GLD total-return live extension,
+  GC=F month-ends second opinion — the FRED `GOLDPMGBD228NL` named at proposal
+  time is dead; see log 2026-10-12), S&P 500 total return (or price index +
+  reinvested dividend proxy), 3-month T-bill (FRED `TB3MS`), 1977-01-01 →
+  present, monthly bars.
 - Costs: base run costless (matches vendor style), sensitivity run at 10 bps per
   switch; no leverage, fully invested.
 - Engine: self-contained Python (pandas) under `studies/gold-spx-switching-replication/code/`.
