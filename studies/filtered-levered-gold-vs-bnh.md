@@ -10,7 +10,7 @@ status: proposed
 
 # Study: Filtered-Levered Gold vs Gold Buy-and-Hold
 
-Code: https://github.com/frankyboots/receipts-lab/tree/main/studies/filtered-levered-gold-vs-bnh (status: protocol-only, seeded 2026-10-12)
+Code: https://github.com/receiptsandregimes/receipts-lab/tree/main/studies/filtered-levered-gold-vs-bnh (status: protocol-only, seeded 2026-10-12)
 
 ## Question
 

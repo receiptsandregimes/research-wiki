@@ -10,7 +10,7 @@ status: proposed
 
 # Study: Gold/SPX Switching Replication
 
-Code: https://github.com/frankyboots/receipts-lab/tree/main/studies/gold-spx-switching-replication (status: protocol-only, seeded 2026-10-12)
+Code: https://github.com/receiptsandregimes/receipts-lab/tree/main/studies/gold-spx-switching-replication (status: protocol-only, seeded 2026-10-12)
 
 ## Question
 Can a plausible reconstruction of [[returnstream]]'s [[gold-spx-switching-strategy]]

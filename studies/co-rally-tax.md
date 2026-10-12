@@ -10,7 +10,7 @@ status: proposed
 
 # Study: Co-Rally Tax (rotation-onset test)
 
-Code: https://github.com/frankyboots/receipts-lab/tree/main/studies/co-rally-tax (status: protocol-only, seeded 2026-10-12)
+Code: https://github.com/receiptsandregimes/receipts-lab/tree/main/studies/co-rally-tax (status: protocol-only, seeded 2026-10-12)
 
 ## Question
 

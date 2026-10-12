@@ -10,7 +10,7 @@ status: proposed
 
 # Study: Gold/SPX Ratio-Momentum Rotation Replication
 
-Code: https://github.com/frankyboots/receipts-lab/tree/main/studies/gold-spx-ratio-rotation-replication (status: protocol-only, seeded 2026-10-12)
+Code: https://github.com/receiptsandregimes/receipts-lab/tree/main/studies/gold-spx-ratio-rotation-replication (status: protocol-only, seeded 2026-10-12)
 
 ## Question
 Does the fully-disclosed [[gold-spx-rs-ratio-rotation]] signal reproduce CAGR ≈ 9.9% /
