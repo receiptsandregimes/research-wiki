@@ -1,13 +1,14 @@
 ---
 title: What happens to gold/SPX rotation when BOTH assets fall together?
 created: 2026-10-08
-updated: 2026-10-08
+updated: 2026-10-12
 type: question
 tags: [momentum, equities, commodities, correlation, drawdown, risk, question]
 sources: []
 status: open
 priority: 1
 spawned_by: [gold-spx-rs-ratio-rotation, gold-spx-switching-strategy, switching-positive-in-dotcom-subprime]
+videos: [open-question-gold-spx-rotation]
 ---
 
 # Question

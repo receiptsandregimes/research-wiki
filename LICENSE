@@ -1,0 +1,16 @@
+Licensing for this repository
+
+1. Original wiki content (claims, concepts, entities, studies, questions,
+   comparisons, queries, README, SCHEMA, index, log) by Frank:
+   Creative Commons Attribution 4.0 International (CC BY 4.0).
+   Full legal text: https://creativecommons.org/licenses/by/4.0/legalcode
+   You are free to share and adapt this material for any purpose, including
+   commercially, with attribution linking to the specific page(s) used.
+
+2. Third-party cited material (quoted phrases, vendor-reported numbers,
+   descriptions of external articles) remains © its respective authors and is
+   cited here under fair use / fair dealing as attributed facts and short
+   quotations. It is NOT licensed onward by item 1. Cite the original sources.
+
+3. Code in this repository (if any): MIT license, copyright Frank. Executable
+   research code lives in the companion dev repository, also MIT.

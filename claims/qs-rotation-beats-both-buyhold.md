@@ -1,7 +1,7 @@
 ---
 title: Gold/SPX ratio-SMA rotation beats both buy-and-holds (1985–2020, CAGR 9.9% / max DD 22%)
 created: 2026-10-08
-updated: 2026-10-08
+updated: 2026-10-12
 type: claim
 tags: [momentum, commodities, equities, backtest, drawdown, claim]
 sources: [raw/articles/quantifiedstrategies-gold-sp500-rotation.md]
@@ -10,6 +10,7 @@ status: untested
 testable: true
 origin: source
 tested_by: [studies/gold-spx-ratio-rotation-replication]
+videos: [open-question-gold-spx-rotation]
 ---
 
 # Claim

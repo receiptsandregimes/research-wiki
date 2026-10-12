@@ -24,8 +24,36 @@ research-wiki/
 ```
 
 **Layer 1 — raw/:** immutable. Corrections go in Layer 2, never in raw.
+The public repo carries **citation cards** in `raw/` (metadata, attributed
+facts/numbers in our words, short attributed quotes, link). The verbatim full
+texts, scraped images, and verbatim transcripts live in `raw_local/`
+(gitignored private store, backed up to the private `research-wiki-internal`
+repo). Frank-recollection transcripts are **paraphrased** for the public card.
 **Layer 2 — the wiki:** agent-owned. Created/updated per ingest and per study.
 **Layer 3 — SCHEMA.md:** this file.
+
+## Public contract (this repo is PUBLIC)
+
+The wiki is the public research record for the Receipts & Regimes channel
+(@receiptsandregimes). Videos pose questions from `questions/` and publish
+verdicts from `studies/`; descriptions and on-screen citations link wiki pages
+by slug.
+
+- **Slug stability:** once a video cites a page slug, never rename or delete
+  that page. Supersede via `_archive/` with a pointer stub if a page must go.
+- **Video links:** pages cite videos via frontmatter `videos: [video-slug]`
+  (slug = the `research-videos/videos/<slug>/` directory). Log video
+  publish/verdict events in `log.md`.
+- **Nothing third-party full-text:** ingests write the verbatim source into
+  `raw_local/` and a citation card into `raw/`. No scraped images in git.
+  Short quotes must be attributed and minimal. Vendor numbers are recorded as
+  attributed facts (they're what the source reports), never as our findings.
+- **Frank's knowledge:** public transcripts pages are paraphrases; verbatim
+  records stay in `raw_local/`.
+- **Licensing:** original content CC BY 4.0 (see LICENSE); README carries the
+  no-investment-advice disclaimer. Don't weaken either.
+- **No secrets, ever:** no credentials, account names, broker names, or PII —
+  public repo means every commit is a potential publication.
 
 ## The claim → study loop (core workflow)
 1. Ingest a source → extract **claims** into `claims/` (one file per atomic,
@@ -106,6 +134,8 @@ priority: 1 | 2 | 3                 # 1 = work on it next; backlog ordering
 spawned_by: [claims/x, studies/y]   # what triggered the wondering
 promoted_to: [claims/z, studies/w]  # when promoted
 answered_by: queries/slug           # when answered without a study
+# any page cited by a video:
+videos: [video-slug]                # stable slug; see Public contract
 ---
 ```
 
@@ -119,16 +149,19 @@ costs, engine/code path) · Method · Results (with numbers) · Verdict ·
 Next tests prompted. Study code lives with the study under
 `studies/<slug>/code/` or references an external repo by commit hash.
 
-## raw/ frontmatter
+## raw/ frontmatter (citation cards)
 ```yaml
 ---
 source_url: https://example.com/article   # if applicable
 origin: web | paper | frank-recollection | paste
 ingested: YYYY-MM-DD
-sha256: <hex of body below frontmatter>
+sha256: <hex of the verbatim full text in raw_local/>
+full_text: raw_local/articles/slug.md (private store)
 ---
 ```
-Re-ingest: recompute sha256 — skip if identical, flag drift if different.
+Re-ingest: recompute sha256 over the raw_local full text — skip if identical,
+flag drift if different. New ingests: write full text to `raw_local/`, card to
+`raw/`, never the reverse.
 
 ## Tag Taxonomy
 Add new tags HERE before using them.

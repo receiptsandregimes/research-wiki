@@ -1,13 +1,14 @@
 ---
 title: How much of the rotation edge is just the dividend exclusion?
 created: 2026-10-08
-updated: 2026-10-08
+updated: 2026-10-12
 type: question
 tags: [momentum, equities, backtest, data-quality, cost, question]
 sources: []
 status: open
 priority: 2
 spawned_by: [qs-rotation-beats-both-buyhold, quantified-strategies]
+videos: [open-question-gold-spx-rotation]
 ---
 
 # Question

@@ -74,3 +74,25 @@
   updated questions/does-the-cash-leg-earn-its-keep.md (reframed as
   Antonacci's claim on our pair; Frank's working prior recorded)
 - Updated index.md (26 pages)
+
+## 2026-10-12 — public go-live restructure (Receipts & Regimes work-in-public)
+
+- Repo re-scoped as the PUBLIC research record for @receiptsandregimes; SCHEMA
+  gains a "Public contract" section (slug stability, `videos:` links, citation
+  cards, no third-party full text/images in git, paraphrased transcripts,
+  CC BY 4.0 + disclaimer, no-secrets rule).
+- raw/articles/*.md rewritten as CITATION CARDS (attributed facts/rules/
+  numbers, short quotes, links); full texts + 11 scraped images + verbatim
+  Frank transcript moved to raw_local/ (gitignored; archived to private
+  research-wiki-internal repo + local history bundle).
+- raw/transcripts/frank-... page is now a paraphrase; verbatim stays private.
+- Deleted stray root article.txt (unmanaged duplicate of QS article).
+- Added README.md (public interface + disclaimer) and LICENSE (CC BY 4.0
+  text / MIT code; third-party cited content stays with its authors).
+- Added videos: [open-question-gold-spx-rotation] to the 7 pages cited by
+  Open Question #1 (3 claims, 3 questions, dual-momentum concept).
+- Drift flag: returnstream stored body did not match its ingest sha256
+  (pre-existing; annotation-era diff unrecoverable). Re-hashed and flagged on
+  the card, not silently corrected. QS + transcript hashes verified clean.
+- Study code will live in a public companion dev repo, referenced by commit
+  hash per SCHEMA.

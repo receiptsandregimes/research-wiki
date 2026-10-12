@@ -2,7 +2,7 @@
 
 > Catalog of every page in the trading brain. Read this first to find relevant
 > pages for any query.
-> Last updated: 2026-10-08 | Total pages: 26
+> Last updated: 2026-10-12 | Total pages: 26 | PUBLIC — research record for @receiptsandregimes; page slugs are citation keys, never rename cited ones.
 
 ## Claims
 - [[gold-spx-switching-outperforms-both-assets]] — vendor backtest: switching system 12.7% CAGR / 31% max DD vs SPX 9.0%/53%, gold 7.5%/62% (1977–2026). untested.

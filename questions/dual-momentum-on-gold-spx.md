@@ -1,13 +1,14 @@
 ---
 title: Does dual momentum with per-asset filters beat one-of-two rotation on gold/SPX?
 created: 2026-10-08
-updated: 2026-10-08
+updated: 2026-10-12
 type: question
 tags: [momentum, equities, commodities, risk, question]
 sources: [raw/transcripts/frank-gold-convexity-dual-momentum-2026-10-08.md]
 status: open
 priority: 1
 spawned_by: [dual-momentum, rotation-onset-co-rally, gold-as-call-option, gold-spx-rs-ratio-rotation, gold-spx-switching-strategy]
+videos: [open-question-gold-spx-rotation]
 ---
 
 # Question

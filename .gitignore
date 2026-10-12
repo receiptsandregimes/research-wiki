@@ -8,3 +8,7 @@ studies/**/data/
 *.csv
 !raw/**/*.csv
 .env
+
+# Private provenance store: third-party full texts, scraped images, verbatim
+# transcripts. NEVER commit — this repo is public. See SCHEMA.md "Public contract".
+raw_local/

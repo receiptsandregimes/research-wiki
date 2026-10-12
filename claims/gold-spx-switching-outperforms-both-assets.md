@@ -1,7 +1,7 @@
 ---
 title: Gold/SPX relative-strength switching beats both assets on CAGR and max drawdown (1977–2026)
 created: 2026-10-08
-updated: 2026-10-08
+updated: 2026-10-12
 type: claim
 tags: [momentum, commodities, equities, backtest, drawdown, claim]
 sources: [raw/articles/returnstream-gold-sp500-switching.md]
@@ -10,6 +10,7 @@ status: untested
 testable: true
 origin: source
 tested_by: [studies/gold-spx-switching-replication]
+videos: [open-question-gold-spx-rotation]
 ---
 
 # Claim

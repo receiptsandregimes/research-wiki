@@ -1,11 +1,12 @@
 ---
 title: Dual momentum
 created: 2026-10-08
-updated: 2026-10-08
+updated: 2026-10-12
 type: concept
 tags: [momentum, trend-following, risk, concept]
 sources: [raw/transcripts/frank-gold-convexity-dual-momentum-2026-10-08.md]
 confidence: medium
+videos: [open-question-gold-spx-rotation]
 ---
 
 # Dual momentum
