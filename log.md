@@ -96,3 +96,9 @@
   the card, not silently corrected. QS + transcript hashes verified clean.
 - Study code will live in a public companion dev repo, referenced by commit
   hash per SCHEMA.
+- 2026-10-12 (later): history scrubbed via git-filter-repo (full texts, scraped
+  images, verbatim transcript, stray article.txt exist in NO commit; originals
+  live only in raw_local/ + private research-wiki-internal + local bundle).
+  Repo flipped PUBLIC; companion public dev repo `receipts-lab` created
+  (study code, referenced by commit hash); video packets' Code & notes links
+  pointed at receipts-lab.
