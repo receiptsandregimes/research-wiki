@@ -1,7 +1,7 @@
 ---
 title: Gold/SPX Switching Replication
 created: 2026-10-08
-updated: 2026-10-08
+updated: 2026-10-12
 type: study
 tags: [momentum, commodities, equities, backtest, drawdown, study]
 sources: [raw/articles/returnstream-gold-sp500-switching.md]
@@ -9,6 +9,8 @@ status: proposed
 ---
 
 # Study: Gold/SPX Switching Replication
+
+Code: https://github.com/frankyboots/receipts-lab/tree/main/studies/gold-spx-switching-replication (status: protocol-only, seeded 2026-10-12)
 
 ## Question
 Can a plausible reconstruction of [[returnstream]]'s [[gold-spx-switching-strategy]]

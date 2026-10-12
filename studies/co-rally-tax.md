@@ -1,7 +1,7 @@
 ---
 title: Co-Rally Tax — does one-of-two rotation give up the first leg of regime shifts?
 created: 2026-10-08
-updated: 2026-10-08
+updated: 2026-10-12
 type: study
 tags: [momentum, correlation, equities, commodities, backtest, study]
 sources: [raw/transcripts/frank-gold-convexity-dual-momentum-2026-10-08.md]
@@ -9,6 +9,8 @@ status: proposed
 ---
 
 # Study: Co-Rally Tax (rotation-onset test)
+
+Code: https://github.com/frankyboots/receipts-lab/tree/main/studies/co-rally-tax (status: protocol-only, seeded 2026-10-12)
 
 ## Question
 

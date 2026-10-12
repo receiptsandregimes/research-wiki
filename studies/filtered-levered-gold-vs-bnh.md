@@ -1,7 +1,7 @@
 ---
 title: Filtered-Levered Gold vs Gold Buy-and-Hold (the option-shape test)
 created: 2026-10-08
-updated: 2026-10-08
+updated: 2026-10-12
 type: study
 tags: [trend-following, commodities, leverage, position-sizing, backtest, study]
 sources: [raw/transcripts/frank-gold-convexity-dual-momentum-2026-10-08.md]
@@ -9,6 +9,8 @@ status: proposed
 ---
 
 # Study: Filtered-Levered Gold vs Gold Buy-and-Hold
+
+Code: https://github.com/frankyboots/receipts-lab/tree/main/studies/filtered-levered-gold-vs-bnh (status: protocol-only, seeded 2026-10-12)
 
 ## Question
 

@@ -102,3 +102,22 @@
   Repo flipped PUBLIC; companion public dev repo `receipts-lab` created
   (study code, referenced by commit hash); video packets' Code & notes links
   pointed at receipts-lab.
+
+## 2026-10-12 — receipts-lab seed: gold/SPX study family
+
+- Seeded receipts-lab studies/gold-spx-ratio-rotation-replication/ for gold-spx-ratio-rotation-replication
+- Seeded receipts-lab studies/gold-spx-switching-replication/ for gold-spx-switching-replication
+- Seeded receipts-lab studies/co-rally-tax/ for co-rally-tax
+- Seeded receipts-lab studies/filtered-levered-gold-vs-bnh/ for filtered-levered-gold-vs-bnh
+- All four proposed studies share one data pull, seeded as a batch (receipts-lab
+  commit 48d9db9). Shared stdlib fetch script (identical copy per study):
+  FRED TB3MS, Yahoo ^SPX/SPY/GC=F, Shiller ie_data.xls; LBMA/GOLD via
+  NDATALINK_API_KEY. Verified reachable 2026-10-12.
+- Source reality check (recorded in each code README's disclosure block):
+  FRED GOLDPMGBD228NL retired (HTTP 404) — wiki protocols naming it diverge
+  accordingly; prices.lbma.org.uk and Stooq bot-walled from scripts; free
+  keyless gold starts 2000 (GC=F), so full-history gold (1971/1977/1985 ->)
+  needs a free Nasdaq Data Link key. Pre-1984 SPX via Shiller stitched to
+  Yahoo (seam-normalized); Shiller file ends 2023-09 as served.
+- dual-momentum-on-gold-spx stays unseeded on purpose: synthesis question fed
+  by these four; seeding it now would invert the dependency order.

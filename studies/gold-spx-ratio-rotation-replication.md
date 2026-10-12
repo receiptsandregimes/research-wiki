@@ -1,7 +1,7 @@
 ---
 title: Gold/SPX Ratio-Momentum Rotation Replication (QuantifiedStrategies)
 created: 2026-10-08
-updated: 2026-10-08
+updated: 2026-10-12
 type: study
 tags: [momentum, commodities, equities, backtest, drawdown, study]
 sources: [raw/articles/quantifiedstrategies-gold-sp500-rotation.md]
@@ -9,6 +9,8 @@ status: proposed
 ---
 
 # Study: Gold/SPX Ratio-Momentum Rotation Replication
+
+Code: https://github.com/frankyboots/receipts-lab/tree/main/studies/gold-spx-ratio-rotation-replication (status: protocol-only, seeded 2026-10-12)
 
 ## Question
 Does the fully-disclosed [[gold-spx-rs-ratio-rotation]] signal reproduce CAGR ≈ 9.9% /
