@@ -182,13 +182,15 @@ def apply_rules(domain, rules):
               f"({len(rules)} redirect rules)")
         return
     first_err = out.get("errors")
-    # Fallback: account-level ruleset bound to the zone (needs CF_ACCOUNT_ID
-    # and an account-scoped token).
+    # Fallback: account-level ruleset. Per CF OpenAPI (rulesets_CreateRuleset)
+    # the body is name/description/kind/phase/rules — no zone binding; the
+    # account entrypoint serves the newest ruleset for the phase, and every
+    # rule is gated by http.host eq <domain>, so other zones are unaffected.
     account_id = os.environ.get("CF_ACCOUNT_ID")
     if account_id:
         out2 = cf_api(
             "POST", f"accounts/{account_id}/rulesets", token,
-            dict(body, kind="zone", zone_id=zone_id), strict=False,
+            body, strict=False,
         )
         if out2.get("success"):
             r = out2["result"]
