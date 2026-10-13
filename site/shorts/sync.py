@@ -114,11 +114,11 @@ def build_rules(domain, target_base, redirects):
             "action": "redirect",
             "expression": expr,
             "action_parameters": {
-                "status_code": 301,
-                "preserve_query_string": False,
                 "redirect_from_value": {
                     "source": f"https://{domain}{uri}",
                     "target": {"type": "static", "value": target},
+                    "status_code": 301,
+                    "preserve_query_string": False,
                 },
             },
             "description": f"rcpts short: {uri} -> {path or 'wiki home'}",
