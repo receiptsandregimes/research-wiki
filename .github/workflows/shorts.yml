@@ -1,11 +1,16 @@
 name: Sync short links to Cloudflare
 
 # shorts.yaml is the source of truth for rcpts.link -> wiki permalinks.
-# On change, validate and push the redirect ruleset to the Cloudflare zone.
-# Requires repo secrets: CF_API_TOKEN with ACCOUNT-level permission
-# "Account Rules and Filters: Edit" + Zone "Zone Read" (redirect rules live in
-# account rulesets bound to the zone; a zone-scoped token is rejected).
+# On change, validate and sync to Cloudflare Bulk Redirects: a `redirect`
+# list (rcpts_short) plus one account rule pointing the
+# http_request_redirect phase at it. Zone-level redirect rules are dead for
+# new zones; the CSV bulk-redirects upload endpoint rejects API tokens.
+# Requires repo secret CF_API_TOKEN with account permissions:
+#   Bulk URL Redirects: Edit (or Account Filter Lists: Edit)
+#   Account Rules and Filters: Edit  (rulesets write)
 # Repo variable CF_ACCOUNT_ID = Cloudflare account ID (dashboard right rail).
+# CF_ACCOUNT_ID must be set as a repo VARIABLE (not secret):
+#   gh variable set CF_ACCOUNT_ID --repo receiptsandregimes/research-wiki
 
 on:
   push:
@@ -32,5 +37,4 @@ jobs:
         run: python3 site/shorts/sync.py --apply
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-          CF_ZONE: ${{ vars.CF_ZONE }}
           CF_ACCOUNT_ID: ${{ vars.CF_ACCOUNT_ID }}

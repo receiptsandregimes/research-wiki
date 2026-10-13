@@ -170,3 +170,16 @@
   `.github/workflows/shorts.yml` -> Cloudflare dynamic-redirect ruleset on the
   zone (needs repo secret CF_API_TOKEN + the zone added to the CF account).
 - SCHEMA Public contract: added "Short links (rcpts.link)" rule.
+
+## 2026-10-13 (later) — short-link pipeline live; mechanism correction
+- Correcting the entry above: zone-level redirect rules are dead for new
+  zones and the CSV bulk-upload endpoint rejects API tokens. Working
+  mechanism is account-level Bulk Redirects (docs: rules/url-forwarding/
+  bulk-redirects/create-api): a `redirect` list (`rcpts_short`) + ONE
+  http_request_redirect account rule (`http.request.full_uri in $rcpts_short`).
+- `site/shorts/sync.py` rewritten to the documented Lists API flow: ensure
+  list -> upsert/prune items (async ops polled) -> update existing entrypoint
+  ruleset by ID. Idempotent; run on every shorts.yaml change.
+- Edge-verified all 8 redirects: 301 -> canonical permalink -> 200.
+- Video packet (research-videos) description.md + description-youtube.txt now
+  carry https://rcpts.link/<code> links (URL chars 561 -> 219).
