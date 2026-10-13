@@ -41,6 +41,13 @@ by slug.
 
 - **Slug stability:** once a video cites a page slug, never rename or delete
   that page. Supersede via `_archive/` with a pointer stub if a page must go.
+- **Permalinks:** the wiki publishes at
+  <https://wiki.receiptsandregimes.com/> — URL = repo path minus `.md`
+  (`claims/qs-rotation-beats-both-buyhold.md` →
+  `/claims/qs-rotation-beats-both-buyhold`). Video descriptions cite these
+  brand URLs; GitHub blob URLs remain as the canonical-source fallback. Same
+  slug rule governs both. Site build: `site/quartz.config.yaml` +
+  `.github/workflows/deploy.yml` (Quartz 5, pinned).
 - **Video links:** pages cite videos via frontmatter `videos: [video-slug]`
   (slug = the `research-videos/videos/<slug>/` directory). Log video
   publish/verdict events in `log.md`.

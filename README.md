@@ -25,9 +25,11 @@ question gets filed, and studies produce verdicts — SUPPORTED / REFUTED / MIXE
 
 ## How videos cite this wiki
 
+The public site is **[wiki.receiptsandregimes.com](https://wiki.receiptsandregimes.com)**.
 Video descriptions and on-screen citations reference pages by slug — e.g.
 `qs-rotation-beats-both-buyhold` →
-<https://github.com/receiptsandregimes/research-wiki/blob/main/claims/qs-rotation-beats-both-buyhold.md>.
+<https://wiki.receiptsandregimes.com/claims/qs-rotation-beats-both-buyhold>
+(source: <https://github.com/receiptsandregimes/research-wiki/blob/main/claims/qs-rotation-beats-both-buyhold.md>).
 **Once a video cites a slug, that slug never changes and the page never
 disappears.** Pages carry a `videos:` frontmatter field linking them back to
 the videos that cite them.

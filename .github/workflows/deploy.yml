@@ -1,0 +1,67 @@
+name: Deploy wiki site to GitHub Pages
+
+# Builds the Quartz site from the wiki content and publishes it to
+# https://wiki.receiptsandregimes.com (GitHub Pages, Actions artifact deploy).
+# Content = committed markdown of this repo; the Quartz app itself is fetched
+# at build time (pinned tag) and is NOT part of the wiki repo.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Fetch Quartz (pinned)
+        run: git clone --depth 1 --branch v5 https://github.com/jackyzha0/quartz.git .quartz-app
+
+      - name: Assemble site
+        run: |
+          cp site/quartz.config.yaml .quartz-app/quartz.config.yaml
+          rm -rf .quartz-app/content && mkdir -p .quartz-app/content
+          git ls-files -z claims concepts entities comparisons queries questions studies raw index.md log.md SCHEMA.md README.md \
+            | xargs -0 -I{} cp --parents {} .quartz-app/content/
+
+      - name: Install dependencies
+        working-directory: .quartz-app
+        run: npm ci --include=dev
+
+      - name: Install Quartz plugins
+        working-directory: .quartz-app
+        run: npx quartz plugin install --from-config
+
+      - name: Build site
+        working-directory: .quartz-app
+        run: npx quartz build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .quartz-app/public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

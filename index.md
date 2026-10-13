@@ -1,3 +1,13 @@
+---
+title: The Index
+description: Catalog of every page in the Receipts & Regimes research brain — claims, open questions, studies, concepts. Read this first.
+created: 2026-10-08
+updated: 2026-10-13
+type: query
+tags: [meta]
+sources: []
+---
+
 # Wiki Index
 
 > Catalog of every page in the trading brain. Read this first to find relevant

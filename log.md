@@ -138,3 +138,15 @@
 - receipts-lab fetch script updated accordingly (GLD added to universe; mirror
   reclassified frozen-history; header cites this page). Paid licensed fix feed
   (metals-api class) noted as the only fix-grade continuation — deferred.
+
+## [2026-10-13] create | Public site: wiki.receiptsandregimes.com (GitHub Pages)
+- Quartz 5 site added: site/quartz.config.yaml + .github/workflows/deploy.yml.
+  Quartz app fetched at build time (pinned v5); content = committed markdown.
+- Pages enabled on research-wiki (Actions build), custom domain
+  wiki.receiptsandregimes.com; DNS CNAME pending. URL contract: repo path
+  minus .md = permalink (slug stability rule unchanged).
+- Config: pageTitle "Receipts & Regimes", baseUrl wiki.receiptsandregimes.com,
+  note-properties show status/confidence/verdict/origin/videos/tags, sitemap
+  on, RSS off, footer -> GitHub/receipts-lab/YouTube.
+- README + SCHEMA "Permalinks" updated to brand URLs (GitHub blob = fallback).
+- index.md given frontmatter (home page title/description).
