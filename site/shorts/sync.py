@@ -189,17 +189,19 @@ def apply_rules(domain, rules):
     # rule is gated by http.host eq <domain>, so other zones are unaffected.
     account_id = os.environ.get("CF_ACCOUNT_ID")
     if account_id:
-        out2 = cf_api(
-            "POST", f"accounts/{account_id}/rulesets", token,
-            body, strict=False,
-        )
-        if out2.get("success"):
-            r = out2["result"]
-            print(f"pushed account ruleset {r['id']} bound to zone {domain} "
-                  f"({len(rules)} redirect rules)")
-            return
-        sys.exit(f"both push paths failed.\nzone entrypoint: {first_err}\n"
-                 f"account ruleset: {out2.get('errors')}")
+        last_errs = [f"zone entrypoint: {out.get('errors')}"]
+        for kind in ("zone", "root"):
+            out2 = cf_api(
+                "POST", f"accounts/{account_id}/rulesets", token,
+                dict(body, kind=kind), strict=False,
+            )
+            if out2.get("success"):
+                r = out2["result"]
+                print(f"pushed account ruleset {r['id']} (kind={kind}) "
+                      f"({len(rules)} redirect rules)")
+                return
+            last_errs.append(f"account ruleset kind={kind}: {out2.get('errors')}")
+        sys.exit("all push paths failed.\n" + "\n".join(last_errs))
     sys.exit(f"zone entrypoint push failed: {first_err}\n"
              "(if the entrypoint is rejected, set repo variable CF_ACCOUNT_ID "
              "and use an account-scoped token)")
