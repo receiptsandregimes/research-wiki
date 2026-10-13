@@ -201,8 +201,10 @@ def ensure_list(token, acct):
 
 def sync_items(token, acct, list_id, rows):
     current = cf_api("GET",
-                     f"accounts/{acct}/rules/lists/{list_id}/items?per_page=1000",
+                     f"accounts/{acct}/rules/lists/{list_id}/items",
                      token) or []
+    if isinstance(current, dict):  # empty-list shape, not a bare array
+        current = current.get("items") or []
     cur_by_src = {}
     for it in current:
         src = (it.get("redirect") or {}).get("source_url")
