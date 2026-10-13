@@ -166,6 +166,7 @@ def apply_rules(domain, rules):
         "name": "rcpts short links",
         "description": f"Synced from research-wiki shorts.yaml "
                        f"({len(rules)} rules). Do not edit in dashboard.",
+        "kind": "custom",
         "phase": "http_request_redirect",
         "rules": rules,
     }
