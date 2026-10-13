@@ -165,7 +165,7 @@ def cf_api(method, endpoint, token, body=None, strict=True):
         if not strict:
             return out
         sys.exit(f"Cloudflare API error on {method} {endpoint}: {out.get('errors')}")
-    return out.get("result", out)
+    return out["result"] if strict else out
 
 
 def wait_op(token, acct, op_id):
@@ -243,13 +243,22 @@ def push_ruleset(token, acct, n):
                        "Do not edit in dashboard.",
         "rules": [build_rule()],
     }
-    out = cf_api("PUT",
-                 f"accounts/{acct}/rulesets/phases/http_request_redirect/entrypoint",
-                 token, body, strict=False)
-    if out.get("success"):
-        print(f"entrypoint ruleset {out['result']['id']} updated "
-              f"(list {LIST_NAME} live, {n} entries)")
-        return
+    # Find the phase entrypoint ruleset (a root may already exist) and
+    # update it by ID per the documented Update-an-account-ruleset flow.
+    ep = cf_api("GET",
+                f"accounts/{acct}/rulesets/phases/http_request_redirect/entrypoint",
+                token, strict=False)
+    rid = (ep.get("result") or {}).get("id") if isinstance(ep, dict) else None
+    if rid:
+        out = cf_api("PUT", f"accounts/{acct}/rulesets/{rid}", token,
+                     dict(body, kind="root", phase="http_request_redirect"),
+                     strict=False)
+        if out.get("success"):
+            print(f"updated entrypoint ruleset {rid} "
+                  f"(list {LIST_NAME} live, {n} entries)")
+            return
+    else:
+        out = {"note": f"entrypoint GET: {ep}"}
     out2 = cf_api("POST", f"accounts/{acct}/rulesets", token,
                   dict(body, kind="root", phase="http_request_redirect"),
                   strict=False)
@@ -258,8 +267,8 @@ def push_ruleset(token, acct, n):
               f"(list {LIST_NAME} live, {n} entries)")
         return
     sys.exit(f"list synced but ruleset push failed.\n"
-             f"entrypoint PUT: {out.get('errors')}\n"
-             f"ruleset POST: {out2.get('errors')}")
+             f"update attempt: {out}\n"
+             f"create attempt: {out2}")
 
 
 def apply_registry(domain, target_base, redirects):
