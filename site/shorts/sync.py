@@ -18,6 +18,7 @@ import json
 import os
 import re
 import sys
+import urllib.error
 import urllib.parse
 import urllib.request
 
@@ -94,6 +95,10 @@ def validate(domain, target_base, redirects):
 
 
 def build_rules(domain, target_base, redirects):
+    # Dashboard-native "Redirect Rules" (zone phase http_request_redirect).
+    # NOTE: the older dynamic-redirects phase is deprecated; Bulk Redirects is
+    # the 950-rule upgrade path (needs account-level ruleset) if we outgrow
+    # the free plan's static redirect quota (10/zone).
     rules = []
     for code, path in redirects:
         uri = "/" + code if code else "/"
@@ -106,12 +111,15 @@ def build_rules(domain, target_base, redirects):
         else:
             expr = f'http.host eq "{domain}"'
         rules.append({
-            "action": "dynamic",
+            "action": "redirect",
             "expression": expr,
             "action_parameters": {
-                "format": "redirect",
-                "status_code": "301",
-                "target_url": {"value": target},
+                "status_code": 301,
+                "preserve_query_string": False,
+                "redirect_from_value": {
+                    "source": f"https://{domain}{uri}",
+                    "target": {"type": "static", "value": target},
+                },
             },
             "description": f"rcpts short: {uri} -> {path or 'wiki home'}",
         })
@@ -125,10 +133,14 @@ def cf_api(method, endpoint, token, body=None):
     req.add_header("Authorization", "Bearer " + token)
     req.add_header("Content-Type", "application/json")
     req.add_header("CF-API-Version", "2")
-    with urllib.request.urlopen(req, timeout=60) as resp:
-        out = json.loads(resp.read().decode())
+    try:
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            out = json.loads(resp.read().decode())
+    except urllib.error.HTTPError as e:
+        detail = e.read().decode(errors="replace")
+        sys.exit(f"Cloudflare HTTP {e.code} on {method} {endpoint}:\n{detail}")
     if not out.get("success"):
-        raise RuntimeError(f"Cloudflare API error: {out.get('errors')}")
+        sys.exit(f"Cloudflare API error: {out.get('errors')}")
     return out["result"]
 
 
@@ -149,7 +161,7 @@ def apply_rules(domain, rules):
         "name": "rcpts short links",
         "description": f"Synced from research-wiki shorts.yaml "
                        f"({len(rules)} rules). Do not edit in dashboard.",
-        "phase": "http_request_dynamic_redirects",
+        "phase": "http_request_redirect",
         "rules": rules,
     }
     result = cf_api("POST", f"zones/{zone_id}/rulesets", token, body)
@@ -171,7 +183,7 @@ def main():
     args = sys.argv[1:]
     if "--emit-json" in args:
         print(json.dumps(
-            {"phase": "http_request_dynamic_redirects", "rules": rules}, indent=2))
+            {"phase": "http_request_redirect", "rules": rules}, indent=2))
     if "--apply" in args:
         apply_rules(domain, rules)
 
