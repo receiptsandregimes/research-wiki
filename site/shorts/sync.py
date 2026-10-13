@@ -1,39 +1,38 @@
 #!/usr/bin/env python3
 """Sync shorts.yaml -> Cloudflare Bulk Redirects (rcpts.link 301s).
 
-Ground truth (verified 2026-10-13 against the live API + CF OpenAPI):
-- Zone-level redirect phase is dead for new zones ("phase http_request_redirect
-  not allowed at zone level"); the zone entrypoint rejects it too.
-- Account-level `http_request_redirect` rulesets accept ONLY list-based
-  (`from_list`) redirect rules — i.e. Bulk Redirects. `from_value` is rejected
-  at account level.
-So this script uploads the whole registry as one Bulk Redirect list (CSV) and
-points a single account-entrypoint rule at it. Both endpoints are
-account-scoped and work with an API token:
+Documented flow (developers.cloudflare.com/rules/url-forwarding/
+bulk-redirects/create-api/, Aug 2026 — verified live):
 
-  1. POST /accounts/{CF_ACCOUNT_ID}/rulesets/bulk_redirects?filename=<name>.csv
-     raw CSV body (no header):
-     source_url,target_url,status_code,include_subpath,preserve_query_string
-     Re-uploading the same filename replaces the list.
-  2. PUT  /accounts/{CF_ACCOUNT_ID}/rulesets/phases/http_request_redirect/entrypoint
-     body {name, description, rules:[{action: redirect,
-            expression: http.request.full_uri in $<list_id>,
-            action_parameters: {from_list: {name, key}}}]}
-     Falls back to POST /accounts/{id}/rulesets kind=root if the entrypoint
-     does not exist yet.
+  1. POST /accounts/{CF_ACCOUNT_ID}/rules/lists
+       {name, description, kind: "redirect"}          # create once, reuse
+  2. POST /accounts/{acct}/rules/lists/{list_id}/items  # async, poll
+       [{redirect: {source_url, target_url, status_code, ...}}, ...]
+     plus GET items to prune entries no longer in the registry.
+  3. Account ruleset on phase http_request_redirect with ONE rule:
+       expression: http.request.full_uri in $<list_name>
+       action_parameters.from_list: {name: <list_name>, key: full_uri}
+     PUT .../rulesets/phases/http_request_redirect/entrypoint, fallback
+     POST /accounts/{acct}/rulesets {kind: root, phase: ...}.
 
-Auth env: CF_API_TOKEN (Account Rules and Filters: Edit), CF_ACCOUNT_ID.
-Stdlib only.
+(Zone-level redirect rules are dead for new zones; account-level rules only
+accept list-based `from_list`. The old CSV `rulesets/bulk_redirects` upload
+endpoint does not accept API tokens.)
+
+Auth env: CF_API_TOKEN (Account > Bulk URL Redirects: Edit OR Account Filter
+Lists: Edit, plus Account Rulesets Write e.g. via Account Rules and Filters:
+Edit), CF_ACCOUNT_ID. Stdlib only.
 
 Usage:
   python3 sync.py                 # validate + summary
-  python3 sync.py --emit-json     # print CSV + rule JSON (manual import)
+  python3 sync.py --emit-json     # print list/items/rule JSON (manual import)
   python3 sync.py --apply         # push to Cloudflare
 """
 import json
 import os
 import re
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -42,8 +41,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 REGISTRY = os.path.join(REPO_ROOT, "shorts.yaml")
 CODE_RE = re.compile(r"^[a-z0-9]{3,12}$")
-LIST_NAME = "rcpts_short"          # ^[a-zA-Z0-9_]+$ — matches filename stem
-LIST_FILE = LIST_NAME + ".csv"
+LIST_NAME = "rcpts_short"   # ^[a-zA-Z0-9_]+$ — usable in rule expressions
 
 
 def parse_registry(path=REGISTRY):
@@ -113,11 +111,7 @@ def validate(domain, target_base, redirects):
 
 
 def build_rows(domain, target_base, redirects):
-    """[(source_url, target_url), ...] — one per registry entry.
-
-    Sources carry the host, so matching is host-specific without any extra
-    expression gate.
-    """
+    """[(source_url, target_url), ...] — sources carry the host."""
     rows = []
     for code, path in redirects:
         source = f"https://{domain}/" + (code if code else "")
@@ -126,16 +120,24 @@ def build_rows(domain, target_base, redirects):
     return rows
 
 
-def build_csv(rows):
-    return "".join(
-        f"{src},{tgt},301,false,false\n" for src, tgt in rows
-    ).encode()
+def build_items(rows):
+    return [
+        {"redirect": {
+            "source_url": src,
+            "target_url": tgt,
+            "status_code": 301,
+            "subpath_matching": False,
+            "preserve_query_string": False,
+        }}
+        for src, tgt in rows
+    ]
 
 
-def build_rule(list_id):
+def build_rule():
     return {
         "action": "redirect",
-        "expression": f"http.request.full_uri in ${list_id}",
+        "ref": LIST_NAME,
+        "expression": f"http.request.full_uri in ${LIST_NAME}",
         "action_parameters": {
             "from_list": {"name": LIST_NAME, "key": "http.request.full_uri"},
         },
@@ -148,21 +150,9 @@ def cf_api(method, endpoint, token, body=None, strict=True):
     data = json.dumps(body).encode() if body is not None else None
     req = urllib.request.Request(url, data=data, method=method)
     req.add_header("Authorization", "Bearer " + token)
-    req.add_header("Content-Type", "application/json")
+    if data is not None:
+        req.add_header("Content-Type", "application/json")
     req.add_header("CF-API-Version", "2")
-    return _send(req, method, endpoint, strict)
-
-
-def cf_raw_post(endpoint, token, body_bytes, content_type):
-    url = "https://api.cloudflare.com/client/v4/" + endpoint.lstrip("/")
-    req = urllib.request.Request(url, data=body_bytes, method="POST")
-    req.add_header("Authorization", "Bearer " + token)
-    req.add_header("Content-Type", content_type)
-    req.add_header("CF-API-Version", "2")
-    return _send(req, "POST", endpoint, strict=True)
-
-
-def _send(req, method, endpoint, strict):
     try:
         with urllib.request.urlopen(req, timeout=60) as resp:
             out = json.loads(resp.read().decode())
@@ -174,59 +164,114 @@ def _send(req, method, endpoint, strict):
     if not out.get("success"):
         if not strict:
             return out
-        sys.exit(f"Cloudflare API error: {out.get('errors')}")
+        sys.exit(f"Cloudflare API error on {method} {endpoint}: {out.get('errors')}")
     return out.get("result", out)
+
+
+def wait_op(token, acct, op_id):
+    """Poll an async list-items operation to completion."""
+    for _ in range(60):
+        st = cf_api("GET", f"accounts/{acct}/rules/lists/bulk_operations/{op_id}",
+                    token)
+        status = st.get("status")
+        if status == "completed":
+            return
+        if status == "failed":
+            sys.exit(f"list operation {op_id} failed: {st}")
+        time.sleep(2)
+    sys.exit(f"list operation {op_id} timed out")
+
+
+def ensure_list(token, acct):
+    lists = cf_api("GET",
+                   f"accounts/{acct}/rules/lists?kind=redirect&per_page=100",
+                   token)
+    for l in lists or []:
+        if l.get("name") == LIST_NAME:
+            return l["id"]
+    created = cf_api("POST", f"accounts/{acct}/rules/lists", token, {
+        "name": LIST_NAME,
+        "description": "rcpts.link short codes (synced from research-wiki "
+                       "shorts.yaml). Do not edit in dashboard.",
+        "kind": "redirect",
+    })
+    print(f"created redirect list {LIST_NAME} id={created['id']}")
+    return created["id"]
+
+
+def sync_items(token, acct, list_id, rows):
+    current = cf_api("GET",
+                     f"accounts/{acct}/rules/lists/{list_id}/items?per_page=1000",
+                     token) or []
+    cur_by_src = {}
+    for it in current:
+        src = (it.get("redirect") or {}).get("source_url")
+        if src:
+            cur_by_src[src] = it
+    desired = {src: tgt for src, tgt in rows}
+
+    stale_ids = [it.get("id") or it.get("item_id")
+                 for src, it in cur_by_src.items() if src not in desired]
+    if stale_ids:
+        q = urllib.parse.quote(",".join(i for i in stale_ids if i))
+        res = cf_api("DELETE",
+                     f"accounts/{acct}/rules/lists/{list_id}/items?items={q}",
+                     token)
+        wait_op(token, acct, res["operation_id"])
+        print(f"pruned {len(stale_ids)} stale entries")
+
+    upsert = [
+        item for item in build_items(rows)
+        if (cur_by_src.get(item["redirect"]["source_url"], {}).get("redirect")
+            or {}).get("target_url") != item["redirect"]["target_url"]
+    ]
+    if upsert:
+        res = cf_api("POST", f"accounts/{acct}/rules/lists/{list_id}/items",
+                     token, upsert)
+        wait_op(token, acct, res["operation_id"])
+        print(f"synced {len(upsert)} entries (added/changed)")
+    else:
+        print("list already current")
+
+
+def push_ruleset(token, acct, n):
+    body = {
+        "name": "rcpts short links",
+        "description": f"Synced from research-wiki shorts.yaml ({n} entries). "
+                       "Do not edit in dashboard.",
+        "rules": [build_rule()],
+    }
+    out = cf_api("PUT",
+                 f"accounts/{acct}/rulesets/phases/http_request_redirect/entrypoint",
+                 token, body, strict=False)
+    if out.get("success"):
+        print(f"entrypoint ruleset {out['result']['id']} updated "
+              f"(list {LIST_NAME} live, {n} entries)")
+        return
+    out2 = cf_api("POST", f"accounts/{acct}/rulesets", token,
+                  dict(body, kind="root", phase="http_request_redirect"),
+                  strict=False)
+    if out2.get("success"):
+        print(f"created entrypoint ruleset {out2['result']['id']} "
+              f"(list {LIST_NAME} live, {n} entries)")
+        return
+    sys.exit(f"list synced but ruleset push failed.\n"
+             f"entrypoint PUT: {out.get('errors')}\n"
+             f"ruleset POST: {out2.get('errors')}")
 
 
 def apply_registry(domain, target_base, redirects):
     token = os.environ.get("CF_API_TOKEN")
-    account_id = os.environ.get("CF_ACCOUNT_ID")
+    acct = os.environ.get("CF_ACCOUNT_ID")
     if not token:
         sys.exit("CF_API_TOKEN not set — cannot apply")
-    if not account_id:
+    if not acct:
         sys.exit("CF_ACCOUNT_ID not set (repo variable) — account endpoints "
                  "require it")
     rows = build_rows(domain, target_base, redirects)
-    # 1) Upload the bulk redirect list (same filename replaces prior list).
-    result = cf_raw_post(
-        f"accounts/{account_id}/rulesets/bulk_redirects"
-        f"?filename={urllib.parse.quote(LIST_FILE)}",
-        token, build_csv(rows), "text/csv",
-    )
-    list_id = result.get("id") or result.get("list_id")
-    print(f"uploaded bulk list {LIST_FILE} id={list_id} "
-          f"valid={result.get('numValid')} "
-          f"existing={result.get('numAlreadyExist')}")
-    if not list_id:
-        sys.exit(f"upload succeeded but no list id in response: {result}")
-    # 2) Point the account entrypoint at the list.
-    body = {
-        "name": "rcpts short links",
-        "description": f"Synced from research-wiki shorts.yaml "
-                       f"({len(rows)} entries). Do not edit in dashboard.",
-        "rules": [build_rule(list_id)],
-    }
-    out = cf_api(
-        "PUT",
-        f"accounts/{account_id}/rulesets/phases/http_request_redirect/entrypoint",
-        token, body, strict=False,
-    )
-    if out.get("success"):
-        r = out["result"]
-        print(f"entrypoint ruleset {r['id']} updated ({len(rows)} redirects live)")
-        return
-    # Entrypoint may not exist yet -> create the phase ruleset directly.
-    out2 = cf_api(
-        "POST", f"accounts/{account_id}/rulesets", token,
-        dict(body, kind="root", phase="http_request_redirect"), strict=False,
-    )
-    if out2.get("success"):
-        r = out2["result"]
-        print(f"created account ruleset {r['id']} ({len(rows)} redirects live)")
-        return
-    sys.exit(f"list uploaded OK (id={list_id}) but ruleset push failed.\n"
-             f"entrypoint PUT: {out.get('errors')}\n"
-             f"ruleset POST: {out2.get('errors')}")
+    list_id = ensure_list(token, acct)
+    sync_items(token, acct, list_id, rows)
+    push_ruleset(token, acct, len(rows))
 
 
 def main():
@@ -243,9 +288,9 @@ def main():
     args = sys.argv[1:]
     if "--emit-json" in args:
         print(json.dumps({
-            "bulk_list_filename": LIST_FILE,
-            "csv": build_csv(rows).decode(),
-            "rule_template": build_rule("<LIST_ID>"),
+            "list": {"name": LIST_NAME, "kind": "redirect"},
+            "items": build_items(rows),
+            "rule": build_rule(),
         }, indent=2))
     if "--apply" in args:
         apply_registry(domain, target_base, redirects)
