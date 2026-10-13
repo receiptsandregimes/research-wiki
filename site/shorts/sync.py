@@ -1,18 +1,34 @@
 #!/usr/bin/env python3
-"""Sync shorts.yaml -> Cloudflare 301 redirect rules for the short domain.
+"""Sync shorts.yaml -> Cloudflare Bulk Redirects (rcpts.link 301s).
 
-Source of truth: shorts.yaml at the wiki root. This script parses it,
-validates it, and either emits the Cloudflare ruleset JSON (--emit-json) or
-pushes it to the zone's http_request_dynamic_redirects phase (--apply).
+Ground truth (verified 2026-10-13 against the live API + CF OpenAPI):
+- Zone-level redirect phase is dead for new zones ("phase http_request_redirect
+  not allowed at zone level"); the zone entrypoint rejects it too.
+- Account-level `http_request_redirect` rulesets accept ONLY list-based
+  (`from_list`) redirect rules — i.e. Bulk Redirects. `from_value` is rejected
+  at account level.
+So this script uploads the whole registry as one Bulk Redirect list (CSV) and
+points a single account-entrypoint rule at it. Both endpoints are
+account-scoped and work with an API token:
 
-Auth for --apply: env CF_API_TOKEN (token with Zone:Rules Edit + Zone:Zone
-Read). Zone is resolved by name from CF_ZONE (default: the registry `domain`).
+  1. POST /accounts/{CF_ACCOUNT_ID}/rulesets/bulk_redirects?filename=<name>.csv
+     raw CSV body (no header):
+     source_url,target_url,status_code,include_subpath,preserve_query_string
+     Re-uploading the same filename replaces the list.
+  2. PUT  /accounts/{CF_ACCOUNT_ID}/rulesets/phases/http_request_redirect/entrypoint
+     body {name, description, rules:[{action: redirect,
+            expression: http.request.full_uri in $<list_id>,
+            action_parameters: {from_list: {name, key}}}]}
+     Falls back to POST /accounts/{id}/rulesets kind=root if the entrypoint
+     does not exist yet.
+
+Auth env: CF_API_TOKEN (Account Rules and Filters: Edit), CF_ACCOUNT_ID.
 Stdlib only.
 
 Usage:
   python3 sync.py                 # validate + summary
-  python3 sync.py --emit-json     # print ruleset JSON (manual dashboard import)
-  python3 sync.py --apply         # push to Cloudflare (requires CF_API_TOKEN)
+  python3 sync.py --emit-json     # print CSV + rule JSON (manual import)
+  python3 sync.py --apply         # push to Cloudflare
 """
 import json
 import os
@@ -26,6 +42,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 REGISTRY = os.path.join(REPO_ROOT, "shorts.yaml")
 CODE_RE = re.compile(r"^[a-z0-9]{3,12}$")
+LIST_NAME = "rcpts_short"          # ^[a-zA-Z0-9_]+$ — matches filename stem
+LIST_FILE = LIST_NAME + ".csv"
 
 
 def parse_registry(path=REGISTRY):
@@ -94,37 +112,35 @@ def validate(domain, target_base, redirects):
     return errors
 
 
-def build_rules(domain, target_base, redirects):
-    # Dashboard-native "Redirect Rules" (zone phase http_request_redirect).
-    # NOTE: the older dynamic-redirects phase is deprecated; Bulk Redirects is
-    # the 950-rule upgrade path (needs account-level ruleset) if we outgrow
-    # the free plan's static redirect quota (10/zone).
-    rules = []
+def build_rows(domain, target_base, redirects):
+    """[(source_url, target_url), ...] — one per registry entry.
+
+    Sources carry the host, so matching is host-specific without any extra
+    expression gate.
+    """
+    rows = []
     for code, path in redirects:
-        uri = "/" + code if code else "/"
+        source = f"https://{domain}/" + (code if code else "")
         target = target_base + ("/" + path if path else "/")
-        if code:
-            expr = (
-                f'http.host eq "{domain}" and '
-                f'http.request.uri.path eq "{uri}"'
-            )
-        else:
-            expr = f'http.host eq "{domain}"'
-        rules.append({
-            "action": "redirect",
-            "expression": expr,
-            "action_parameters": {
-                # Schema: rulesets_RedirectRule (CF OpenAPI) — key is
-                # "from_value"; older "redirect_from_value" naming rejected.
-                "from_value": {
-                    "target_url": {"value": target},
-                    "status_code": 301,
-                    "preserve_query_string": False,
-                },
-            },
-            "description": f"rcpts short: {uri} -> {path or 'wiki home'}",
-        })
-    return rules
+        rows.append((source, target))
+    return rows
+
+
+def build_csv(rows):
+    return "".join(
+        f"{src},{tgt},301,false,false\n" for src, tgt in rows
+    ).encode()
+
+
+def build_rule(list_id):
+    return {
+        "action": "redirect",
+        "expression": f"http.request.full_uri in ${list_id}",
+        "action_parameters": {
+            "from_list": {"name": LIST_NAME, "key": "http.request.full_uri"},
+        },
+        "description": f"rcpts short links (bulk list {LIST_NAME})",
+    }
 
 
 def cf_api(method, endpoint, token, body=None, strict=True):
@@ -134,6 +150,19 @@ def cf_api(method, endpoint, token, body=None, strict=True):
     req.add_header("Authorization", "Bearer " + token)
     req.add_header("Content-Type", "application/json")
     req.add_header("CF-API-Version", "2")
+    return _send(req, method, endpoint, strict)
+
+
+def cf_raw_post(endpoint, token, body_bytes, content_type):
+    url = "https://api.cloudflare.com/client/v4/" + endpoint.lstrip("/")
+    req = urllib.request.Request(url, data=body_bytes, method="POST")
+    req.add_header("Authorization", "Bearer " + token)
+    req.add_header("Content-Type", content_type)
+    req.add_header("CF-API-Version", "2")
+    return _send(req, "POST", endpoint, strict=True)
+
+
+def _send(req, method, endpoint, strict):
     try:
         with urllib.request.urlopen(req, timeout=60) as resp:
             out = json.loads(resp.read().decode())
@@ -146,67 +175,58 @@ def cf_api(method, endpoint, token, body=None, strict=True):
         if not strict:
             return out
         sys.exit(f"Cloudflare API error: {out.get('errors')}")
-    return out["result"]
+    return out.get("result", out)
 
 
-def apply_rules(domain, rules):
+def apply_registry(domain, target_base, redirects):
     token = os.environ.get("CF_API_TOKEN")
+    account_id = os.environ.get("CF_ACCOUNT_ID")
     if not token:
         sys.exit("CF_API_TOKEN not set — cannot apply")
-    zones = cf_api(
-        "GET",
-        f"zones?name={urllib.parse.quote(domain)}",
-        token,
+    if not account_id:
+        sys.exit("CF_ACCOUNT_ID not set (repo variable) — account endpoints "
+                 "require it")
+    rows = build_rows(domain, target_base, redirects)
+    # 1) Upload the bulk redirect list (same filename replaces prior list).
+    result = cf_raw_post(
+        f"accounts/{account_id}/rulesets/bulk_redirects"
+        f"?filename={urllib.parse.quote(LIST_FILE)}",
+        token, build_csv(rows), "text/csv",
     )
-    if not zones:
-        sys.exit(f"no Cloudflare zone found for {domain} "
-                 "(add the domain to your Cloudflare account first)")
-    zone_id = zones[0]["id"]
+    list_id = result.get("id") or result.get("list_id")
+    print(f"uploaded bulk list {LIST_FILE} id={list_id} "
+          f"valid={result.get('numValid')} "
+          f"existing={result.get('numAlreadyExist')}")
+    if not list_id:
+        sys.exit(f"upload succeeded but no list id in response: {result}")
+    # 2) Point the account entrypoint at the list.
     body = {
         "name": "rcpts short links",
         "description": f"Synced from research-wiki shorts.yaml "
-                       f"({len(rules)} rules). Do not edit in dashboard.",
-        "kind": "custom",
-        "phase": "http_request_redirect",
-        "rules": rules,
+                       f"({len(rows)} entries). Do not edit in dashboard.",
+        "rules": [build_rule(list_id)],
     }
-    # Preferred: zone phase entrypoint. Spec says PUT (POST -> 405) and body
-    # is name/description/rules only (phase comes from the URL path);
-    # from_value rules are valid at zone level.
     out = cf_api(
         "PUT",
-        f"zones/{zone_id}/rulesets/phases/http_request_redirect/entrypoint",
-        token, {"name": body["name"], "description": body["description"],
-                "rules": rules}, strict=False,
+        f"accounts/{account_id}/rulesets/phases/http_request_redirect/entrypoint",
+        token, body, strict=False,
     )
     if out.get("success"):
         r = out["result"]
-        print(f"pushed ruleset {r['id']} to zone {domain} entrypoint "
-              f"({len(rules)} redirect rules)")
+        print(f"entrypoint ruleset {r['id']} updated ({len(rows)} redirects live)")
         return
-    first_err = out.get("errors")
-    # Fallback: account-level ruleset. Per CF OpenAPI (rulesets_CreateRuleset)
-    # the body is name/description/kind/phase/rules — no zone binding; the
-    # account entrypoint serves the newest ruleset for the phase, and every
-    # rule is gated by http.host eq <domain>, so other zones are unaffected.
-    account_id = os.environ.get("CF_ACCOUNT_ID")
-    if account_id:
-        last_errs = [f"zone entrypoint: {out.get('errors')}"]
-        for kind in ("zone", "root"):
-            out2 = cf_api(
-                "POST", f"accounts/{account_id}/rulesets", token,
-                dict(body, kind=kind), strict=False,
-            )
-            if out2.get("success"):
-                r = out2["result"]
-                print(f"pushed account ruleset {r['id']} (kind={kind}) "
-                      f"({len(rules)} redirect rules)")
-                return
-            last_errs.append(f"account ruleset kind={kind}: {out2.get('errors')}")
-        sys.exit("all push paths failed.\n" + "\n".join(last_errs))
-    sys.exit(f"zone entrypoint push failed: {first_err}\n"
-             "(if the entrypoint is rejected, set repo variable CF_ACCOUNT_ID "
-             "and use an account-scoped token)")
+    # Entrypoint may not exist yet -> create the phase ruleset directly.
+    out2 = cf_api(
+        "POST", f"accounts/{account_id}/rulesets", token,
+        dict(body, kind="root", phase="http_request_redirect"), strict=False,
+    )
+    if out2.get("success"):
+        r = out2["result"]
+        print(f"created account ruleset {r['id']} ({len(rows)} redirects live)")
+        return
+    sys.exit(f"list uploaded OK (id={list_id}) but ruleset push failed.\n"
+             f"entrypoint PUT: {out.get('errors')}\n"
+             f"ruleset POST: {out2.get('errors')}")
 
 
 def main():
@@ -218,14 +238,17 @@ def main():
             print("  -", e)
         sys.exit(1)
     named = [c for c, _ in redirects if c]
+    rows = build_rows(domain, target_base, redirects)
     print(f"ok: {len(named)} codes + root on {domain} -> {target_base}")
-    rules = build_rules(domain, target_base, redirects)
     args = sys.argv[1:]
     if "--emit-json" in args:
-        print(json.dumps(
-            {"phase": "http_request_redirect", "rules": rules}, indent=2))
+        print(json.dumps({
+            "bulk_list_filename": LIST_FILE,
+            "csv": build_csv(rows).decode(),
+            "rule_template": build_rule("<LIST_ID>"),
+        }, indent=2))
     if "--apply" in args:
-        apply_rules(domain, rules)
+        apply_registry(domain, target_base, redirects)
 
 
 if __name__ == "__main__":
