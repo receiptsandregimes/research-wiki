@@ -126,7 +126,7 @@ def build_rules(domain, target_base, redirects):
     return rules
 
 
-def cf_api(method, endpoint, token, body=None):
+def cf_api(method, endpoint, token, body=None, strict=True):
     url = "https://api.cloudflare.com/client/v4/" + endpoint.lstrip("/")
     data = json.dumps(body).encode() if body is not None else None
     req = urllib.request.Request(url, data=data, method=method)
@@ -138,8 +138,12 @@ def cf_api(method, endpoint, token, body=None):
             out = json.loads(resp.read().decode())
     except urllib.error.HTTPError as e:
         detail = e.read().decode(errors="replace")
+        if not strict:
+            return {"success": False, "errors": [{"http": e.code, "body": detail}]}
         sys.exit(f"Cloudflare HTTP {e.code} on {method} {endpoint}:\n{detail}")
     if not out.get("success"):
+        if not strict:
+            return out
         sys.exit(f"Cloudflare API error: {out.get('errors')}")
     return out["result"]
 
@@ -164,9 +168,37 @@ def apply_rules(domain, rules):
         "phase": "http_request_redirect",
         "rules": rules,
     }
-    result = cf_api("POST", f"zones/{zone_id}/rulesets", token, body)
-    print(f"pushed ruleset {result['id']} to zone {domain} "
-          f"({len(rules)} redirect rules)")
+    # Preferred: zone phase entrypoint (Rulesets API, redirect phase is not
+    # creatable as a bare zone ruleset).
+    out = cf_api(
+        "POST",
+        f"zones/{zone_id}/rulesets/phases/http_request_redirect/entrypoint",
+        token, body, strict=False,
+    )
+    if out.get("success"):
+        r = out["result"]
+        print(f"pushed ruleset {r['id']} to zone {domain} entrypoint "
+              f"({len(rules)} redirect rules)")
+        return
+    first_err = out.get("errors")
+    # Fallback: account-level ruleset bound to the zone (needs CF_ACCOUNT_ID
+    # and an account-scoped token).
+    account_id = os.environ.get("CF_ACCOUNT_ID")
+    if account_id:
+        out2 = cf_api(
+            "POST", f"accounts/{account_id}/rulesets", token,
+            dict(body, zone_id=zone_id), strict=False,
+        )
+        if out2.get("success"):
+            r = out2["result"]
+            print(f"pushed account ruleset {r['id']} bound to zone {domain} "
+                  f"({len(rules)} redirect rules)")
+            return
+        sys.exit(f"both push paths failed.\nzone entrypoint: {first_err}\n"
+                 f"account ruleset: {out2.get('errors')}")
+    sys.exit(f"zone entrypoint push failed: {first_err}\n"
+             "(if the entrypoint is rejected, set repo variable CF_ACCOUNT_ID "
+             "and use an account-scoped token)")
 
 
 def main():
