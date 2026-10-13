@@ -187,7 +187,7 @@ def apply_rules(domain, rules):
     if account_id:
         out2 = cf_api(
             "POST", f"accounts/{account_id}/rulesets", token,
-            dict(body, zone_id=zone_id), strict=False,
+            dict(body, kind="zone", zone_id=zone_id), strict=False,
         )
         if out2.get("success"):
             r = out2["result"]

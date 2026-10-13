@@ -2,8 +2,10 @@ name: Sync short links to Cloudflare
 
 # shorts.yaml is the source of truth for rcpts.link -> wiki permalinks.
 # On change, validate and push the redirect ruleset to the Cloudflare zone.
-# Requires repo secrets: CF_API_TOKEN (Zone:Rules Edit + Zone:Zone Read),
-# optional repo variable CF_ZONE (defaults to the registry domain).
+# Requires repo secrets: CF_API_TOKEN with ACCOUNT-level permission
+# "Account Rules and Filters: Edit" + Zone "Zone Read" (redirect rules live in
+# account rulesets bound to the zone; a zone-scoped token is rejected).
+# Repo variable CF_ACCOUNT_ID = Cloudflare account ID (dashboard right rail).
 
 on:
   push:
