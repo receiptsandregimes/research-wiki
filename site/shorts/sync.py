@@ -170,12 +170,14 @@ def apply_rules(domain, rules):
         "phase": "http_request_redirect",
         "rules": rules,
     }
-    # Preferred: zone phase entrypoint (Rulesets API, redirect phase is not
-    # creatable as a bare zone ruleset).
+    # Preferred: zone phase entrypoint. Spec says PUT (POST -> 405) and body
+    # is name/description/rules only (phase comes from the URL path);
+    # from_value rules are valid at zone level.
     out = cf_api(
-        "POST",
+        "PUT",
         f"zones/{zone_id}/rulesets/phases/http_request_redirect/entrypoint",
-        token, body, strict=False,
+        token, {"name": body["name"], "description": body["description"],
+                "rules": rules}, strict=False,
     )
     if out.get("success"):
         r = out["result"]
