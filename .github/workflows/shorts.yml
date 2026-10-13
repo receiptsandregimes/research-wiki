@@ -29,5 +29,5 @@ jobs:
       - name: Validate + apply
         run: python3 site/shorts/sync.py --apply
         env:
-          CF_API_TOKEN: ${ secrets.CF_API_TOKEN }
-          CF_ZONE: ${ vars.CF_ZONE }
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_ZONE: ${{ vars.CF_ZONE }}
