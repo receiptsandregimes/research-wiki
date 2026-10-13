@@ -150,3 +150,8 @@
   on, RSS off, footer -> GitHub/receipts-lab/YouTube.
 - README + SCHEMA "Permalinks" updated to brand URLs (GitHub blob = fallback).
 - index.md given frontmatter (home page title/description).
+
+## [2026-10-13] update | Site live: DNS resolved + HTTPS enforced
+- DNS CNAME wiki -> receiptsandregimes.github.io added; cert approved for
+  wiki.receiptsandregimes.com; Enforce HTTPS on (HTTP 301s, edge propagation
+  in progress). All 7 pilot description permalinks verified 200.
