@@ -51,6 +51,14 @@ by slug.
 - **Video links:** pages cite videos via frontmatter `videos: [video-slug]`
   (slug = the `research-videos/videos/<slug>/` directory). Log video
   publish/verdict events in `log.md`.
+- **Short links (rcpts.link):** YouTube truncates full brand permalinks in the
+  collapsed description view, so descriptions may cite `https://rcpts.link/<code>`
+  301 aliases. Registry: `shorts.yaml` (source of truth); sync:
+  `site/shorts/sync.py` + `.github/workflows/shorts.yml` (Cloudflare
+  dynamic-redirect rules on the rcpts.link zone). Codes are permanent once
+  published — never reassign or recycle. They are a display alias only: the
+  canonical permalink stays repo-path-minus-`.md`, and full permalinks remain
+  the citation form in wiki pages, studies, and receipts.
 - **Nothing third-party full-text:** ingests write the verbatim source into
   `raw_local/` and a citation card into `raw/`. No scraped images in git.
   Short quotes must be attributed and minimal. Vendor numbers are recorded as

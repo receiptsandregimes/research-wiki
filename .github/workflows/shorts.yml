@@ -1,0 +1,33 @@
+name: Sync short links to Cloudflare
+
+# shorts.yaml is the source of truth for rcpts.link -> wiki permalinks.
+# On change, validate and push the redirect ruleset to the Cloudflare zone.
+# Requires repo secrets: CF_API_TOKEN (Zone:Rules Edit + Zone:Zone Read),
+# optional repo variable CF_ZONE (defaults to the registry domain).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - shorts.yaml
+      - site/shorts/**
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Validate + apply
+        run: python3 site/shorts/sync.py --apply
+        env:
+          CF_API_TOKEN: ${ secrets.CF_API_TOKEN }
+          CF_ZONE: ${ vars.CF_ZONE }

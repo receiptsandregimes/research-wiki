@@ -1,0 +1,38 @@
+# Short-link registry for rcpts.link (link affordance for video descriptions).
+#
+# Purpose: YouTube collapses descriptions after ~3 lines; full brand permalinks
+# (wiki.receiptsandregimes.com/...) eat the whole visible area. Short codes on
+# rcpts.link 301 to the canonical permalink. The canonical permalink contract
+# (SCHEMA.md Public contract) is UNCHANGED: short codes are a display alias,
+# never a replacement record. Full permalinks stay in wiki pages and receipts.
+#
+# Rules:
+#   - A code is PERMANENT once published (video/README/description used it).
+#     Never reassign, never recycle. Retire a page? Keep the code pointing at
+#     the pointer stub or successor page.
+#   - Codes: lowercase [a-z0-9], 3-12 chars, mnemonic preferred.
+#   - path = repo permalink (path minus .md) on the wiki; sync.py resolves it
+#     against `target_base`. The file must exist in the repo.
+#   - After editing this file, the sync workflow pushes the rules to
+#     Cloudflare (rcpts.link zone). See site/shorts/sync.py.
+domain: rcpts.link
+target_base: https://wiki.receiptsandregimes.com
+redirects:
+  # Root: bare domain -> wiki home
+  - code: ""
+    path: ""
+  # Video: open-question-gold-spx-rotation (2026-10-13)
+  - code: qrot
+    path: claims/qs-rotation-beats-both-buyhold
+  - code: gsub
+    path: claims/gold-spx-switching-outperforms-both-assets
+  - code: gcrisis
+    path: claims/switching-positive-in-dotcom-subprime
+  - code: bothdown
+    path: questions/both-assets-down-regimes
+  - code: divx
+    path: questions/dividend-exclusion-edge-hole
+  - code: gdual
+    path: questions/dual-momentum-on-gold-spx
+  - code: dual
+    path: concepts/dual-momentum

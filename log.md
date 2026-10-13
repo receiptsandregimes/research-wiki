@@ -155,3 +155,18 @@
 - DNS CNAME wiki -> receiptsandregimes.github.io added; cert approved for
   wiki.receiptsandregimes.com; Enforce HTTPS on (HTTP 301s, edge propagation
   in progress). All 7 pilot description permalinks verified 200.
+
+## [2026-10-13] create | Short-link system: rcpts.link -> wiki permalinks
+- Motivation: YouTube collapses video descriptions (~3 lines); full brand
+  permalinks (69-81 chars) overflow the visible preview and links get cut.
+- New domain rcpts.link (Cloudflare registrar, DNS pending zone). 301 aliases
+  `https://rcpts.link/<code>` -> canonical permalinks; canonical contract
+  unchanged (short code = display alias only; full permalinks stay the citation
+  form in wiki/studies/receipts).
+- Registry `shorts.yaml` (repo root) = source of truth. Rules: codes permanent
+  once published, never reassigned/recycled. 7 codes minted for the gold/SPX
+  video: qrot, gsub, gcrisis, bothdown, divx, gdual, dual (+ root -> wiki home).
+- Sync: `site/shorts/sync.py` (stdlib; validate/emit/apply) +
+  `.github/workflows/shorts.yml` -> Cloudflare dynamic-redirect ruleset on the
+  zone (needs repo secret CF_API_TOKEN + the zone added to the CF account).
+- SCHEMA Public contract: added "Short links (rcpts.link)" rule.
