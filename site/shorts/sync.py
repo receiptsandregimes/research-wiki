@@ -114,9 +114,10 @@ def build_rules(domain, target_base, redirects):
             "action": "redirect",
             "expression": expr,
             "action_parameters": {
-                "redirect_from_value": {
-                    "source": f"https://{domain}{uri}",
-                    "target": {"type": "static", "value": target},
+                # Schema: rulesets_RedirectRule (CF OpenAPI) — key is
+                # "from_value"; older "redirect_from_value" naming rejected.
+                "from_value": {
+                    "target_url": {"value": target},
                     "status_code": 301,
                     "preserve_query_string": False,
                 },
