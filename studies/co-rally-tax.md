@@ -10,7 +10,7 @@ status: proposed
 
 # Study: Co-Rally Tax (rotation-onset test)
 
-Code: https://github.com/receiptsandregimes/receipts-lab/tree/study/co-rally-tax/studies/co-rally-tax (status: data layer complete — DFX-1..DFX-5 landed 2026-10-15, completion commit 5ada3de + battery record fix 200e0ef on branch `study/co-rally-tax`; STUDY SPEC not yet written)
+Code: https://github.com/receiptsandregimes/receipts-lab/tree/study/co-rally-tax/studies/co-rally-tax (status: data layer complete + independently reviewed — DFX-1..DFX-5 landed 2026-10-15 (completion 5ada3de, battery record fix 200e0ef), review findings recorded `aa5b794`, review fixes applied `670dda9` on branch `study/co-rally-tax`: battery 24/24 exit 0, now time-aware with absolute start/end anchors on every source; merge gate ahead of the STUDY SPEC, which is not yet written)
 
 ## Question
 
