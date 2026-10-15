@@ -200,3 +200,24 @@
 - Page's Code line updated: it read "protocol-only, seeded 2026-10-12" while the
   repo now holds code — a false claim on a public page. Results/Verdict stay
   pending: the STUDY SPEC (analysis caps) is not yet written.
+
+## [2026-10-15] update | co-rally-tax battery record strings corrected (Frank directive) — page Code pin moved to `200e0ef`
+- `code/verify_data.py`'s three stale detail strings now state the corrected record,
+  closing the two open watch-items carried on the lab's DFX completion line:
+  claim:C4 ("claim 260; = file coverage, itself the F2 defect" -> "claim 304 mo,
+  complete post-DFX-2; the pre-fix 260 was the F2 gappy file's own coverage"),
+  claim:C8 ("fetch header claims '1950 ->' — WRONG, record fix" -> "corrected to
+  '1934-01' at DFX-5"), and claim:C12b's canned tail ("the defect is COVERAGE
+  (46 missing months), not values" — printed on a PASS and on a value deviation
+  alike) -> a diagnosis derived from the condition actually tripped.
+- Message constants + one comment only: no assertion, exit-code or roster change —
+  22 checks before and after (battery monotonicity intact); the fetch script is
+  untouched, so the shared family pin `94712384…` stands.
+- Verified (orchestrator, repo venv): battery on `data/` 22/22 exit 0 with the
+  corrected text rendering; scratch perturbation probes (one edit each) trip
+  claim:C12b on a value deviation ("stored monthly VALUES deviate from the daily
+  month-end leg (value defect, not coverage)", exit 1) and report "coverage short
+  1 mo (['2015-04'])" on a dropped month, exit 1 — both branches exercised, not
+  only the clean pass. Lab commit `200e0ef` on branch `study/co-rally-tax`.
+- This page's Code line follows to `200e0ef`. Results/Verdict stay pending: the
+  STUDY SPEC (analysis caps) is not yet written.
