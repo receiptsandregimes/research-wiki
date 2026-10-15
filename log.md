@@ -183,3 +183,20 @@
 - Edge-verified all 8 redirects: 301 -> canonical permalink -> 200.
 - Video packet (research-videos) description.md + description-youtube.txt now
   carry https://rcpts.link/<code> links (URL chars 561 -> 219).
+
+## [2026-10-15] update | co-rally-tax data layer complete (DFX-1..DFX-5) — study page no longer claims "protocol-only"
+- receipts-lab `studies/co-rally-tax` data remediation closed, 5 slices, each a
+  commit + a `build DFX-N done` ledger line: DFX-1 duplicate-month dedupe,
+  DFX-2 month-end backfill from the daily leg with a loud both-legs-gap abort,
+  DFX-3 per-file coverage guard wired into the battery, DFX-4 ^SPX monthly
+  rebuilt as a month-end resample of the chunked dailies, DFX-5 re-fetch +
+  re-validation + the empty-dir ordering fix.
+- Validation: offline battery 22/22 exit 0 on the re-fetched `data/` and on an
+  empty-dir fresh pass (single pass now suffices); unit suites 7/7, 15/15,
+  13/13; a perturbation probe trips exactly the guard owning each edited value.
+- Family pin: shared fetch script sha256 `94712384…` (supersedes the pre-fix
+  `854664c0…`; the 3 sibling studies still hold that copy and fetch under their
+  own seeds). Completion commit `5ada3de` on branch `study/co-rally-tax`.
+- Page's Code line updated: it read "protocol-only, seeded 2026-10-12" while the
+  repo now holds code — a false claim on a public page. Results/Verdict stay
+  pending: the STUDY SPEC (analysis caps) is not yet written.
