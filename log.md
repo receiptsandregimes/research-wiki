@@ -221,3 +221,44 @@
   only the clean pass. Lab commit `200e0ef` on branch `study/co-rally-tax`.
 - This page's Code line follows to `200e0ef`. Results/Verdict stay pending: the
   STUDY SPEC (analysis caps) is not yet written.
+
+## [2026-10-15] update | co-rally-tax data-fix stage independently reviewed; gate hardened after F1 — page Code pin moved to `670dda9`
+- Four independent adversarial layers (blind / alignment / verification-gap /
+  spec-protocol) over the DFX stage range `8e20ffce..200e0ef` (8 files, +1138/-104,
+  119,424 B; blind-hunter floor N=min(floor(sqrt(116.625)+1),10)=10, met exactly).
+  The orchestrator re-verified every finding at its cited lines rather than trusting
+  the reports. Triage: 1 decision-needed, 3 patches, 2 defers, 3 findings rejected
+  with refutation (roster in the lab ledger, DECISIONS.md). All five DFX success
+  conditions MET; no SPEC constraint violated; battery monotonicity proven by
+  execution — the PRE-fix `8e20ffce` battery run against the POST-fix `data/` gives
+  20/20 exit 0, i.e. nothing was deleted or weakened (tip 22 = 20 + struct:spx_daily
+  + claim:C6b).
+- F1 (medium, the headline): nothing anchored the END of any stored series. Every
+  offline check was span-relative (each file's own min..max, all inner joins) or
+  head-only (claim:C8 1934-01, claim:C9 1871-01), so a payload truncated at either
+  end survived the fetch guard AND the whole committed gate — six probes on scratch
+  copies of `data/` all returned 22/22 exit 0 (spx minus 1984-99, spx minus 2020-,
+  gld legs minus 2024-, eco3min minus 2015-, tb3ms last 36 rows, gcf-monthly minus
+  2000-09..2005-12), while interior holes do trip. That falsifies the ledger's
+  recorded mitigation ("staleness/span is enforced after the write by the battery")
+  and left frozen matrix row SPEC:152 unenforced by its named cover. Frank's call:
+  patch the battery now; the shared fetch script stays untouched.
+- Fixes (`review: co-rally-tax fixes`): NEW battery section 1b `anchor:first` /
+  `anchor:last` pin the absolute first/last observation of all 12 sources — firsts
+  from the study README's per-file table, ends against the frozen matrix row
+  "[first_date, PARTIAL]" (frozen sources pinned exactly, upstream-lagged monthlies
+  >= PARTIAL-1, live dailies within 10d); claim:C9 is now registered unconditionally
+  and pins BOTH ends (an unreadable Shiller file used to shrink the gate to 21 checks
+  and still exit 0 — probe-verified); the live chunked ^SPX fetch is wrapped and
+  reported (`live:spx chunk fetch`); F3/F4 applied (README count wording, test
+  docstring no longer claims an all-stubbed end-to-end proof). F6/F7 deferred.
+- The gate is now TIME-AWARE by design: data not refreshed for the month under
+  analysis reports STALE. That is the frozen matrix row enforced for real.
+- Verified: battery 24/24 exit 0 on `data/` (22 -> 24, add-only); units 7/7 + 15/15 +
+  13/13; the 6 previously-silent perturbations plus 11 others (17 total) now report
+  DEFECT + exit 1 on scratch copies, control 24/24 exit 0; `data/` never written
+  (mtimes unchanged). Family fetch pin `94712384…` unchanged, so the sibling seeds
+  need no re-point; `verify_data.py` sha now `a578f9d3…`.
+- This page's Code line follows to `670dda9`. Results/Verdict stay pending: the STUDY
+  SPEC (analysis caps) is not yet written, and the merge gate (ff-only `study/co-rally-tax`
+  into main) still has to happen before any result is viewed.
