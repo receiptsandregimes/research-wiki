@@ -1,7 +1,7 @@
 ---
 title: LBMA Gold Price (dataset)
 created: 2026-10-12
-updated: 2026-10-12
+updated: 2026-10-15
 type: entity
 tags: [dataset, gold, data, infrastructure]
 confidence: high
@@ -41,12 +41,26 @@ refresh averages. Free daily fix data, post-Feb-2026, exists nowhere maintained.
 ## What IS alive (probed 2026-10-12)
 
 - **Yahoo `GC=F`** COMEX front-month close — daily, current to today; from 2000-09.
-- **Yahoo `GLD`** adj close (NAV total-return proxy, ~0.4%/yr expense drag) —
-  daily, current to today; from 2004-12.
+- **Yahoo `GLD`** close = the trust's NAV. Gold is a metal object and pays
+  nothing — there is no yield to total. The ~0.4%/yr expense drag is embedded
+  in NAV (the trust sells a little gold monthly to pay its fee), not a
+  distribution. Daily, current to today; from 2004-12.
 - **World Bank Pink Sheet** monthly *average* USD/oz (CC BY 4.0), current;
   mirrors: eco3min.fr CSV (0.0% dev vs xlsx, current to 2026-09) and
   datahub `core/gold-prices` (updated 2026-10-04). Averages — cross-check only,
   not signal-grade.
+
+### The "GLD-TR" label is a misnomer (verified 2026-10-15)
+
+"TR" (total return) was inherited shorthand from the SPX leg, where SPY
+adj-close genuinely folds in dividends. For GLD it adds nothing: Yahoo chart
+API, GLD monthly since inception, 264 months — **0 dividend events, 0 splits,
+adjclose == close on every month, cumulative-return gap 0.000pp** (758.42%
+either way). Stored lab files (`gld_tr_monthly.csv`, column `close`) contain
+plain close. Read every "GLD-TR" in this brain as **GLD NAV return,
+price-only**. Lab filenames/labels stay as-is: studies pin by commit hash and
+the data is byte-identical; receipts-lab fetch-script headers mirror this
+page's older wording — canonical wording lives here.
 
 ## Our gold-leg architecture (adopted 2026-10-12)
 
@@ -54,11 +68,12 @@ refresh averages. Free daily fix data, post-Feb-2026, exists nowhere maintained.
    construction (sha-pinned); triple-validation vs the FRED-era dump (0.0004%
    mean dev), Pink Sheet monthly means (0.06% median), and GC=F month-ends was
    recorded 2026-10-12 and is re-runnable from the fetch script.
-2. **Live extension 2026-03 →:** month-end signals computed on **GLD total
-   returns** (primary; cleanest spot proxy that is current and daily), with
-   **GC=F month-ends** as second opinion. Splice is **ratio-normalized at the
-   seam** — same treatment as Shiller↔Yahoo for SPX — and studies run on
-   within-series returns, never raw spliced levels.
+2. **Live extension 2026-03 →:** month-end signals computed on **GLD NAV
+   returns** (primary; cleanest spot proxy that is current and daily — price
+   return only, gold pays nothing), with **GC=F month-ends** as second
+   opinion. Splice is **ratio-normalized at the seam** — same treatment as
+   Shiller↔Yahoo for SPX — and studies run on within-series returns, never raw
+   spliced levels.
 3. **Cross-check every month:** composite month vs Pink Sheet monthly average;
    flag if |deviation| > 1%.
 
@@ -67,7 +82,7 @@ median 0.36%, p90 1.21%, **max 4.75% at 2026-01** — the seam window IS the
 worst basis month in the record (spot outran futures in the Jan-2026 squeeze),
 which is why naive level-splicing is banned and the cross-check is mandatory.
 
-Extension-leg fidelity (measured 2026-10-12): monthly GLD-TR vs fix returns
+Extension-leg fidelity (measured 2026-10-12): monthly GLD vs fix returns
 over 2004-12→2026-02 (254 mo): **corr 0.974**, |diff| median 0.55%, p90 1.79%.
 Part of this gap is structural timing, not error: the fix prices London 15:00
 while GC=F/GLD price the NY 16:00 close — any proxy we can get free prices a
