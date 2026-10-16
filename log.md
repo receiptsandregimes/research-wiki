@@ -262,3 +262,33 @@
 - This page's Code line follows to `670dda9`. Results/Verdict stay pending: the STUDY
   SPEC (analysis caps) is not yet written, and the merge gate (ff-only `study/co-rally-tax`
   into main) still has to happen before any result is viewed.
+
+## [2026-10-16] update | co-rally-tax data layer merged to main (ff-only) — page Code pin goes main-only; study branch retired
+
+- Frank performed the merge gate: `git merge --ff-only study/co-rally-tax` on main, then
+  published — `8e20ffce..670dda9 main -> main`. ff-only, so no merge commit and all 16
+  study commits survive with identical hashes (a merge moves the ref only; hashes are
+  content objects). Remote `refs/heads/main` and `refs/heads/study/co-rally-tax` both read
+  back as `670dda9`.
+- Pre-push verification on the merged tree (orchestrator-run, repo venv 3.11.16), so the
+  published artifact is the verified one and not merely the same sha: worktree clean (no
+  staged / modified / untracked files, no stash; `data/`, `.venv/`, `.env`,
+  `__pycache__/` all ignored, `.env.example` the only config-shaped tracked file and it
+  holds an empty value); battery offline **24/24 exit 0** with `data/` provably untouched
+  (all 13 file mtimes identical before/after); unit suites DFX-1 7/7 + DFX-2 15/15 +
+  DFX-3 13/13 exit 0; family fetch-script pin `94712384…` unchanged, `verify_data.py`
+  `a578f9d3…` matching the ledger's recorded post-fix sha.
+- This page's Code line now points at `main` instead of the branch ref: the hash is
+  unchanged (`670dda9`) but a branch ref is a provisional pointer that must never carry a
+  pin — and once merged it is no longer even the signal "unmerged work", so keeping it as
+  the pin would misdescribe both the record and the working state. `/tree/main/…` resolves
+  forever; `/tree/study/co-rally-tax/…` would 404 the moment the branch is retired.
+- `study/co-rally-tax` deleted locally and on origin. Nothing is lost: every commit it
+  carried is reachable from `main` (verdict hashes resolve from main). The branch's job per
+  the lab's flow is "workbench for work not yet on main", and the data layer is now on main.
+- The STUDY SPEC (analysis caps) is the next stage and opens its own `study/co-rally-tax`
+  branch off the then-current main tip (`670dda9` unless main moves first) — same name,
+  same content as the retired ref would have had, so retiring now costs nothing and avoids
+  a branch sitting in "already merged" state where its tip can silently diverge.
+- Results/Verdict stay pending: no analysis code exists yet. DFX review findings F6/F7
+  remain deferred as recorded.
