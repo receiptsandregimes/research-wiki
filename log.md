@@ -292,3 +292,24 @@
   a branch sitting in "already merged" state where its tip can silently diverge.
 - Results/Verdict stay pending: no analysis code exists yet. DFX review findings F6/F7
   remain deferred as recorded.
+
+## [2026-10-16] update | co-rally-tax merge recorded in the lab ledger; page Code chain follows to `42ccba0` (main tip)
+
+- Frank's type call for the merge-event line: `ledger` (precedent commit f9ec6d4; the
+  closed lab vocabulary has no merge/ledger type — asked rather than free-handed). Line
+  appended at EOF only: the diff was 1 insertion / 0 deletions, so DECISIONS.md's 51 prior
+  lines stay byte-identical, and its `head=` field names the CODE head (`670dda9`) rather
+  than its own commit, matching the L48 precedent (`head=5ada3de` in the `200e0ef` commit).
+- The line records what the git steps changed plus the evidence: the ff-only push
+  `8e20ffce..670dda9` with no merge commit; the clean-state check (0 staged/modified/
+  untracked, no stash, data/ + .venv/ + .env ignored); the gate re-run FROM THE MERGED TREE
+  rather than credited to the branch (battery 24/24 exit 0 with all 13 data/ mtimes
+  identical, units 7/7 + 15/15 + 13/13); family fetch pin `94712384…` unchanged so the
+  three sibling seeds need no re-point; `verify_data.py` `a578f9d3…` == the L51 record; the
+  pointer-repoint-before-retire ordering and the deliberate absence of a pre-created
+  replacement branch.
+- This page's Code chain follows to `42ccba0` = main's tip. The ledger commit changes no
+  code (it is a record), but the pin names the tip so the public chain has no gap; the
+  resolving ref stays `/tree/main/…`, which survives any future branch retirement.
+- Results/Verdict stay pending: the STUDY SPEC (analysis caps) is still unwritten and
+  remains the next stage.
