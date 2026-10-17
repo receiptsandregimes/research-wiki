@@ -313,3 +313,19 @@
   resolving ref stays `/tree/main/…`, which survives any future branch retirement.
 - Results/Verdict stay pending: the STUDY SPEC (analysis caps) is still unwritten and
   remains the next stage.
+
+## [2026-10-17] update | receipts-lab ledger split into DECISIONS.md + EVENTS.md; reset-away lock tagged
+
+- co-rally-tax's study ledger split (lab commit `49f2831`, branch `study/co-rally-tax`
+  re-armed off main tip `8638b0c`, type-routed and byte-verified): bindings stay in
+  `DECISIONS.md`, narrative moved to `EVENTS.md`. Lab main advanced
+  `42ccba0 → 8638b0c` on meta-docs only (branch-first README, `tools/ledger.py`
+  append/index/tail/split/check) — every hash the wiki pins still resolves on main.
+- Rule 7 (tag before you destroy) applied retroactively: lab tag
+  `mess/co-rally-tax-2026-10-16` (pushed) keeps the reset-away Oct-16 on-main attempt
+  reachable — study SPEC render (`69679de`) + verdict-rule LOCKED (`2d8f249`, 8 frozen
+  values) — so the pre-registered rule text can seed the next lock cycle.
+- Read side: DECISIONS.md whole (small binding log), EVENTS.md by grep / `ledger.py
+  index` only; the receipts-lab skill set was realigned to this routing
+  (quant-librarian-profile).
+

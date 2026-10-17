@@ -1,7 +1,7 @@
 ---
 title: Co-Rally Tax — does one-of-two rotation give up the first leg of regime shifts?
 created: 2026-10-08
-updated: 2026-10-16
+updated: 2026-10-17
 type: study
 tags: [momentum, correlation, equities, commodities, backtest, study]
 sources: [raw/transcripts/frank-gold-convexity-dual-momentum-2026-10-08.md]
@@ -10,7 +10,7 @@ status: proposed
 
 # Study: Co-Rally Tax (rotation-onset test)
 
-Code: https://github.com/receiptsandregimes/receipts-lab/tree/main/studies/co-rally-tax (status: data layer complete + independently reviewed and MERGED — DFX-1..DFX-5 landed 2026-10-15 (completion 5ada3de, battery record fix 200e0ef), review findings recorded `aa5b794`, review fixes applied `670dda9`, merge recorded `42ccba0` (ledger line, no code) = main tip; ff-only merged into `main` and published 2026-10-16, every hash preserved: battery 24/24 exit 0, now time-aware with absolute start/end anchors on every source. Pin is main-only — the `study/co-rally-tax` branch ref was retired at the merge; the STUDY SPEC, which is not yet written, forks a fresh branch off the then-current main tip)
+Code: https://github.com/receiptsandregimes/receipts-lab/tree/main/studies/co-rally-tax (status: data layer complete + independently reviewed and MERGED — DFX-1..DFX-5 landed 2026-10-15 (completion 5ada3de, battery record fix 200e0ef), review findings recorded `aa5b794`, review fixes applied `670dda9`, merge recorded `42ccba0` (ledger line, no code; main tip then) — ff-only merged into `main` and published 2026-10-16, every hash preserved: battery 24/24 exit 0, now time-aware with absolute start/end anchors on every source. Main has since advanced to `8638b0c` on meta-docs only (2026-10-17). Pin is main-only; the branch was re-armed 2026-10-17 off `8638b0c` for the ledger split (commit `49f2831`, unmerged WIP: bindings in DECISIONS.md, narrative in EVENTS.md) — the STUDY SPEC (still unwritten) is the next stage)
 
 ## Question
 
